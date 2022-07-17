@@ -1,4 +1,4 @@
 packages:
   # all packages in direct subdirs of packages/
-  - 'packages/ts-react-lib'
+  - 'packages/react-dynamic-virtual-list'
   - 'packages/playground/*'

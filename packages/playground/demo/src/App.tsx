@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
-import { sum, Button } from 'ts-react-lib'
+import { sum, Button } from 'react-dynamic-virtual-list'
 
 function App() {
   const [count, setCount] = useState(0)

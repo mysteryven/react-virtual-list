@@ -1,5 +1,5 @@
 {
-  "name": "ts-react-lib",
+  "name": "react-dynamic-virtual-list",
   "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
