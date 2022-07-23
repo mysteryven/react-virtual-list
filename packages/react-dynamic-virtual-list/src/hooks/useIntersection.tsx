@@ -5,31 +5,34 @@ export default function useIntersection<T extends Element>(
     options: IntersectionObserverInit,
     isActive = false
 ) {
-    const [state, setState] = useState<IntersectionObserverEntry | null>();
+    const [intersectionObserverEntry, setIntersectionObserverEntry] = useState<IntersectionObserverEntry | null>(null);
 
     useEffect(() => {
         let observer: null | IntersectionObserver = null
         if (isActive && ref.current && typeof IntersectionObserver === 'function') {
             observer = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
-                setState(entries[entries.length - 1])
+                setIntersectionObserverEntry(entries[0])
             }, options);
 
             observer.observe(ref.current)
 
             return () => {
-                setState(null)
+                setIntersectionObserverEntry(null)
                 observer?.disconnect()
             }
         }
 
-        if (!isActive && observer !== null) {
+        if (!isActive && observer) {
             // @ts-ignore
             observer.disconnect()
         }
+    }, [
+        ref.current,
+        Array.isArray(options.threshold) ? options.threshold.join(",") : options.threshold,
+        options.root,
+        options.rootMargin,
+        isActive]
+    )
 
-        return () => { }
-    }, [ref.current, options.threshold, options.root, options.rootMargin, isActive])
-
-
-    return state
+    return intersectionObserverEntry
 }

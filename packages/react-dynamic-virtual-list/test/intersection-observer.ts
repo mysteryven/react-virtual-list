@@ -26,16 +26,15 @@ export function simulate(entry:
             observe.callback(arrayOfEntries.map((entry) => normalizeEntry(entry, observe.target)), observe as any)
         }
     }
-
 }
 
 function normalizeEntry(entry: Partial<IntersectionObserverEntry>, target: Element): IntersectionObserverEntry {
     const isIntersecting =
-    entry.isIntersecting == null
-      ? Boolean(entry.intersectionRatio)
-      : entry.isIntersecting;
+        entry.isIntersecting == null
+            ? Boolean(entry.intersectionRatio)
+            : entry.isIntersecting;
 
-  const intersectionRatio = entry.intersectionRatio || (isIntersecting ? 1 : 0);
+    const intersectionRatio = entry.intersectionRatio || (isIntersecting ? 1 : 0);
 
     return {
         time: entry.time || Date.now(),
@@ -48,35 +47,40 @@ function normalizeEntry(entry: Partial<IntersectionObserverEntry>, target: Eleme
     }
 }
 
-export const IntersectionObserverMock = vi.fn(() => {
-    return class FakeIntersectionObserver {
-        private callback: (entries: IntersectionObserverEntry[]) => void
-        private options?: IntersectionObserverInit
+export const IntersectionObserverMock = vi.fn((
+    callback: (entries: IntersectionObserverEntry[]) => void,
+    options?: IntersectionObserverInit
+) => {
 
-        constructor(
-            callback: (entries: IntersectionObserverEntry[]) => void,
-            options?: IntersectionObserverInit
-        ) {
-            this.callback = callback
-            this.options = options
-        }
-
+    return {
         observe(element: Element) {
             setObservers(observers => [...observers, {
                 source: this,
                 target: element,
-                callback: this.callback,
-                options: this.options
+                callback,
+                options 
             }])
-        }
-
+        },
         disconnect() {
             setObservers(observers => observers.filter(observer => observer.source !== this))
-        }
-
+        },
         unobserve(element: Element) {
             setObservers(observers => observers.filter(observer => observer.source !== element))
         }
     }
 })
 
+let originIntersectionObserver: any = null
+
+export const intersectionMocker = {
+    mock() {
+        originIntersectionObserver = global.IntersectionObserver
+        vi.stubGlobal('IntersectionObserver', IntersectionObserverMock)
+    },
+    simulate,
+    getObservers: () => observers,
+    restore() {
+        global.IntersectionObserver = originIntersectionObserver
+        observers = []
+    }
+}
