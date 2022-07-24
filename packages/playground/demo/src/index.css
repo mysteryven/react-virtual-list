@@ -68,3 +68,39 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+.area {
+  width: 100px;
+  height: 100px;
+  background: red;
+  margin-top: 2000px;
+}
+
+.area1.area {
+  margin-top: 100px
+}
+
+.item {
+  min-height: 40px;
+  margin-bottom: 12px;
+  background: yellowgreen;
+  font-size: 20px;
+  color: white;
+  padding: 32px;
+  text-align: center;
+  display: flex;
+  flex: none;
+  font-size: 24px;
+}
+
+.left {
+  width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.right {
+  width: 90%;
+}

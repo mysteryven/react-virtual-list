@@ -3,7 +3,7 @@ import { RefObject, useEffect, useState } from "react";
 export default function useIntersection<T extends Element>(
     ref: RefObject<T>,
     options: IntersectionObserverInit,
-    isActive = false
+    isActive?: boolean,
 ) {
     const [intersectionObserverEntry, setIntersectionObserverEntry] = useState<IntersectionObserverEntry | null>(null);
 

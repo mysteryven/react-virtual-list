@@ -1,36 +1,36 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import './App.css'
-import { sum, Button } from 'react-dynamic-virtual-list'
+import VirtualList from 'react-dynamic-virtual-list'
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  console.log(sum(1, 2), 'sum')
+  const originalList = useMemo(() => Array.from(Array(4).keys()), []);
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      <VirtualList dividedAreaNum={10} itemCount={4} itemMinHeight={40}>
+        {
+          (props) => <ListItem index={props.index} />
+        }
+      </VirtualList>
+    </div>
+  )
+}
+
+
+
+function ListItem(props: any) {
+  const str = 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.'
+  const times = Math.floor(10 * Math.random())
+
+  return (
+    <div className="item">
+      <h1 className="left">
+        {props.index}
+      </h1>
+      <div className="right">
+        {str.repeat(times)}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <Button />
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }
