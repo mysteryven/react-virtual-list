@@ -157,3 +157,5 @@ describe("useInterseciton", () => {
         expect(intersectionMocker.getObservers()[0].options).toEqual(newOptions)
     })
 })
+
+

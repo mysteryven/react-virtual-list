@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { useMemo } from "react"
 import useIntersection from "./hooks/useIntersection";
 import { ItemRendererProps, ListObserverProps, VirtualListProps } from "./interface";

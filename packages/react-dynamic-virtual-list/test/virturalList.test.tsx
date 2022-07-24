@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ItemRenderer, ListObserver } from "../src";
-import { ListObserverProps } from "../src/interface";
+import VirtualList, { ItemRenderer, ListObserver } from "../src";
+import { ListObserverProps, VirtualListProps } from "../src/interface";
 import { intersectionMocker } from "./intersection-observer";
 
 let visibleAreas: string[] = []
@@ -96,5 +96,45 @@ describe('ListObserver', () => {
 
         expect(items[0].textContent).toBe('0')
         expect(items[1].textContent).toBe('1')
+    })
+})
+
+describe('virtualList', () => {
+    beforeEach(() => {
+        intersectionMocker.mock()
+    })
+
+    afterEach(() => {
+        intersectionMocker.restore()
+    })
+
+    it('should rerender when itemCount changes', () => {
+        const props: VirtualListProps = {
+            itemCount: 10,
+            children: ({ index }) => <div>{index}</div>,
+            itemMinHeight: 60,
+            dividedAreaNum: 100,
+        }
+
+        const { rerender, getAllByRole } = render(<VirtualList {...props} />)
+        expect(getAllByRole('list').length).toBe(10)
+        rerender(<VirtualList {...props} itemCount={11} />)
+
+        expect(getAllByRole('list').length).toBe(11)
+    })
+
+    it('should rerender when dividedAreaNum changes', () => {
+        const props: VirtualListProps = {
+            itemCount: 10,
+            children: ({ index }) => <div>{index}</div>,
+            itemMinHeight: 60,
+            dividedAreaNum: 2,
+        }
+
+        const { rerender, getAllByRole } = render(<VirtualList {...props} />)
+        expect(getAllByRole('list').length).toBe(2)
+        rerender(<VirtualList {...props} dividedAreaNum={5} />)
+
+        expect(getAllByRole('list').length).toBe(5)
     })
 })
