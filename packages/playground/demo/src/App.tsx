@@ -4,11 +4,11 @@ import './App.css'
 import VirtualList, { ChildItemProps } from 'react-dynamic-virtual-list'
 
 function App() {
-  const originalList = useMemo(() => Array.from(Array(4).keys()), []);
+  const originalList = useMemo(() => Array.from(Array(1000).keys()), []);
 
   return (
     <div>
-      <VirtualList dividedAreaNum={10} itemCount={4} itemMinHeight={40}>
+      <VirtualList dividedAreaNum={10} itemCount={1000} itemMinHeight={40}>
         {
           (props) => <ListItem index={props.index} />
         }
