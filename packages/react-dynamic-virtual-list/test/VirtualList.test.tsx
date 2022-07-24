@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import VirtualList, { ItemRenderer, ListObserver } from "../src";
+import VirtualList, { ItemRenderer, ListObserver } from "../src/VirtualList";
 import { ListObserverProps, VirtualListProps } from "../src/interface";
 import { intersectionMocker } from "./intersection-observer";
 
