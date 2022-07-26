@@ -5,23 +5,25 @@ export default function useIdleCallback(
     options?: IdleRequestOptions,
     deps: DependencyList = []
 ) {
-    const handle = useRef<IdleRequestCallback | null>(null)
-
-    useEffect(() => {
-        handle.current = callback
-    })
+    const handleId = useRef<number | null>(null)
 
     useEffect(() => {
         if (isSupported()) {
-            
+            handleId.current = requestIdleCallback(callback, options)
         } else {
 
         }
-    }, deps)
+
+        return () => {
+            if (isSupported() && handleId.current) {
+                cancelIdleCallback(handleId.current)
+            }
+        }
+    }, [...deps, callback])
 }
 
 function isSupported() {
-    return typeof window !== 'undefined' &&
-        'requestIdleCallback' in window &&
-        'cancelIdleCallback' in window
+    return typeof global !== 'undefined' &&
+        'requestIdleCallback' in global &&
+        'cancelIdleCallback' in global
 }
