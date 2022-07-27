@@ -24,7 +24,5 @@ export interface ItemRendererProps {
 }
 
 export enum UnsupportedBehavior {
-    Immedidate,
-    requestAnimation,
     timeout
 }

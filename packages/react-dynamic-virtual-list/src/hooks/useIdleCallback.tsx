@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { UnsupportedBehavior } from "../interface";
 
 export default function useIdleCallback(
-    callback: IdleRequestCallback,
+    callback: () => void,
     options?: IdleRequestOptions,
     unsupportedBehavior: UnsupportedBehavior = UnsupportedBehavior.requestAnimation
 ) {
@@ -11,8 +11,8 @@ export default function useIdleCallback(
     useEffect(() => {
         if (isSupported()) {
             handleId.current = requestIdleCallback(callback, options)
-        } else if(unsupportedBehavior === UnsupportedBehavior.requestAnimation) {
-            handleId.current = requestAnimationFrame(callback)
+        } else if(unsupportedBehavior === UnsupportedBehavior.timeout) {
+            handleId.current = window.setTimeout(callback, options?.timeout || 1000) 
         }
 
         return () => {
@@ -21,8 +21,8 @@ export default function useIdleCallback(
             }
             if (isSupported()) {
                 cancelIdleCallback(handleId.current)
-            } else if (unsupportedBehavior === UnsupportedBehavior.requestAnimation) {
-                cancelAnimationFrame(handleId.current)
+            } else if (unsupportedBehavior === UnsupportedBehavior.timeout) {
+                clearTimeout(handleId.current)
             }
         }
     }, [callback, options?.timeout])
@@ -31,5 +31,7 @@ export default function useIdleCallback(
 function isSupported() {
     return typeof global !== 'undefined' &&
         'requestIdleCallback' in global &&
-        'cancelIdleCallback' in global
+        'cancelIdleCallback' in global &&
+        typeof 'requestIdleCallback' === 'function' &&
+        typeof 'cancelIdleCallback' === 'function'
 }

@@ -20,6 +20,14 @@ const idleCallbackMocker = {
             callbackMap.delete(id)
         }))
     },
+    mockUnSupport() {
+        originRequestIdleCallback = global.requestIdleCallback
+        originCancelIdleCallback = global.cancelIdleCallback
+
+        vi.stubGlobal('requestIdleCallback', null)
+
+        vi.stubGlobal('cancelIdleCallback', null)
+    },
     restore() {
         callbackMap.clear()
         i = 0;

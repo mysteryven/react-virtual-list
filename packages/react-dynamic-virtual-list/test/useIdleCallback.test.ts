@@ -3,7 +3,6 @@ import { renderHook, cleanup } from '@testing-library/react';
 import { describe, vi, it, expect } from 'vitest';
 import useIdleCallback from '../src/hooks/useIdleCallback';
 import idleCallbackMocker from './idleCallback';
-import { DependencyList } from 'react';
 
 describe("useIdleCallback", () => {
     describe('supported', () => {
@@ -38,7 +37,7 @@ describe("useIdleCallback", () => {
             const callback = vi.fn() as any
             const callback2 = vi.fn()
 
-            const { rerender } = renderHook((props: { fn: IdleRequestCallback }) => {
+            const { rerender } = renderHook((props: { fn: () => void }) => {
                 return useIdleCallback(props.fn)
             }, {
                 initialProps: {
@@ -72,6 +71,29 @@ describe("useIdleCallback", () => {
 
             rerender({ options: { timeout: 20 } })
             expect(cancelIdleCallback).toHaveBeenCalledTimes(2)
+        })
+    })
+
+    describe('upsupported with setTimeout', () => {
+
+        beforeEach(() => {
+            idleCallbackMocker.mockUnSupport()
+            vi.useFakeTimers()
+        })
+
+        afterEach(() => {
+            cleanup()
+            idleCallbackMocker.restore()
+            vi.restoreAllMocks()
+        })
+
+        it('should call when browser becomes idle', () => {
+            const callback = vi.fn()
+
+            renderHook(() => useIdleCallback(callback, {timeout: 100}))
+            expect(callback).not.toHaveBeenCalled()
+            vi.advanceTimersByTime(100)
+            expect(callback).toHaveBeenCalledOnce()
         })
     })
 })
