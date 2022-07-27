@@ -6,8 +6,15 @@ let i = 0;
 let originRequestIdleCallback: any = null 
 let originCancelIdleCallback: any = null 
 
+let isMocking = false
+
 const idleCallbackMocker = {
     mock() {
+        if (isMocking) {
+            throw new Error('idleCallbackMocker is already mocking')
+        }
+
+        isMocking = true
         originRequestIdleCallback = global.requestIdleCallback
         originCancelIdleCallback = global.cancelIdleCallback
 
@@ -21,6 +28,11 @@ const idleCallbackMocker = {
         }))
     },
     mockUnSupport() {
+        if (isMocking) {
+            throw new Error('idleCallbackMocker is already mocking')
+        }
+
+        isMocking = true
         originRequestIdleCallback = global.requestIdleCallback
         originCancelIdleCallback = global.cancelIdleCallback
 
@@ -29,6 +41,7 @@ const idleCallbackMocker = {
         vi.stubGlobal('cancelIdleCallback', null)
     },
     restore() {
+        isMocking = false
         callbackMap.clear()
         i = 0;
         global.requestIdleCallback = originRequestIdleCallback 

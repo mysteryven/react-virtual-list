@@ -24,5 +24,6 @@ export interface ItemRendererProps {
 }
 
 export enum UnsupportedBehavior {
+    immediate,
     timeout
 }
