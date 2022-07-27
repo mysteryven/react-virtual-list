@@ -1,25 +1,31 @@
-import { DependencyList, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { UnsupportedBehavior } from "../interface";
 
 export default function useIdleCallback(
     callback: IdleRequestCallback,
     options?: IdleRequestOptions,
-    deps: DependencyList = []
+    unsupportedBehavior: UnsupportedBehavior = UnsupportedBehavior.requestAnimation
 ) {
     const handleId = useRef<number | null>(null)
 
     useEffect(() => {
         if (isSupported()) {
             handleId.current = requestIdleCallback(callback, options)
-        } else {
-
+        } else if(unsupportedBehavior === UnsupportedBehavior.requestAnimation) {
+            handleId.current = requestAnimationFrame(callback)
         }
 
         return () => {
-            if (isSupported() && handleId.current) {
+            if (!handleId.current) {
+                return
+            }
+            if (isSupported()) {
                 cancelIdleCallback(handleId.current)
+            } else if (unsupportedBehavior === UnsupportedBehavior.requestAnimation) {
+                cancelAnimationFrame(handleId.current)
             }
         }
-    }, [...deps, callback])
+    }, [callback, options?.timeout])
 }
 
 function isSupported() {

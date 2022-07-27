@@ -11,14 +11,14 @@ const idleCallbackMocker = {
         originRequestIdleCallback = global.requestIdleCallback
         originCancelIdleCallback = global.cancelIdleCallback
 
-        vi.stubGlobal('requestIdleCallback', (callback: () => void) => {
+        vi.stubGlobal('requestIdleCallback', vi.fn((callback: () => void) => {
             callbackMap.set(++i, callback)
             return i
-        })
+        }))
 
-        vi.stubGlobal('cancelIdleCallback', (id: number) => {
+        vi.stubGlobal('cancelIdleCallback', vi.fn((id: number) => {
             callbackMap.delete(id)
-        })
+        }))
     },
     restore() {
         callbackMap.clear()

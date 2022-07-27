@@ -22,3 +22,9 @@ export interface ItemRendererProps {
     children: FunctionComponent<ChildItemProps>;
     index: number
 }
+
+export enum UnsupportedBehavior {
+    Immedidate,
+    requestAnimation,
+    timeout
+}
