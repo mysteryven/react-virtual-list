@@ -75,7 +75,7 @@ describe("useIdleCallback", () => {
         })
     })
 
-    describe('upsupported with setTimeout', () => {
+    describe('unsupported with setTimeout', () => {
 
         beforeEach(() => {
             idleCallbackMocker.mockUnSupport()
