@@ -1,6 +1,10 @@
-import exp from 'constants'
-import { beforeEach, expect, it, test } from 'vitest'
+import { beforeEach, describe, expect, it, test } from 'vitest'
 import { extractPartVectors, Vector } from '../src/predictHeight/EM'
+
+
+describe("EM", () => {
+
+})
 
 function generatorRandomVectors(num: number, vectorSize: number) {
     let ret: Vector[] = []

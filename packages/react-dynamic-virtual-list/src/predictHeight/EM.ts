@@ -20,13 +20,16 @@
 
 export type Vector = [number[], number];
 
-function calculateCentroids(featureVectors: Vector[], centroidNum: number) {
+export function begin(featureVectors: Vector[], centroidNum: number) {
     const initialCentroids = extractPartVectors(featureVectors, centroidNum);
+    calculateCentroids(featureVectors, initialCentroids)
+}
 
-    let groups: Vector[][] = Array.from({ length: centroidNum }, () => [])
+export function calculateCentroids(featureVectors: Vector[], centroids: Vector[]) {
+    let groups: Vector[][] = Array.from({ length: centroids.length }, () => [])
 
     for (let i = 0; i < featureVectors.length; i++) {
-        const index = findNearestCentroidIndex(featureVectors[i], initialCentroids)
+        const index = findNearestCentroidIndex(featureVectors[i], centroids)
         groups[index].push(featureVectors[i])
     }
 
