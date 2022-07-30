@@ -22,7 +22,7 @@ export type Vector = [number[], number];
 
 export function begin(featureVectors: Vector[], centroidNum: number) {
     const initialCentroids = extractPartVectors(featureVectors, centroidNum);
-    calculateCentroids(featureVectors, initialCentroids)
+    return calculateCentroids(featureVectors, initialCentroids)
 }
 
 export function calculateCentroids(featureVectors: Vector[], centroids: Vector[]) {
@@ -53,9 +53,8 @@ function findNearestCentroidIndex(point: Vector, centroids: Vector[]) {
 
 const sqrtCache = new Map<string, number>();
 
-function calculateCosine(vector: Vector, centroid: Vector) {
-    const consOfTwoPoint = (vector[0].reduce((acc, cur, index) => acc + cur * centroid[0][index], 0)) / (getSqrtOfVector(vector) * getSqrtOfVector(centroid))
-    console.log(consOfTwoPoint)
+export function calculateCosine(x: Vector, y: Vector) {
+    const consOfTwoPoint = (x[0].reduce((acc, cur, index) => acc + cur * y[0][index], 0)) / (getSqrtOfVector(x) * getSqrtOfVector(y))
     return consOfTwoPoint
 }
 
