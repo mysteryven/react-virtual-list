@@ -36,7 +36,7 @@ export function calculateCentroids(featureVectors: Vector[], centroids: Vector[]
     return groups
 }
 
-function findNearestCentroidIndex(point: Vector, centroids: Vector[]) {
+export function findNearestCentroidIndex(point: Vector, centroids: Vector[]) {
     let minIndex = -1
     let minIndexCos = 0
 

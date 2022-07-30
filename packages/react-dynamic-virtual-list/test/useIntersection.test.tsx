@@ -1,7 +1,7 @@
 import { RefObject } from "react";
 import { act, render, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { intersectionMocker } from "./intersection-observer";
+import { intersectionMocker } from "./mock-dom-api/intersection-observer";
 import React from "react";
 import useIntersection from "../src/hooks/useIntersection";
 

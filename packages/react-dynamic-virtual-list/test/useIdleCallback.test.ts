@@ -2,7 +2,7 @@ import { afterEach, beforeEach } from 'vitest';
 import { renderHook, cleanup } from '@testing-library/react';
 import { describe, vi, it, expect } from 'vitest';
 import useIdleCallback, { DEFAULT_TIMEOUT } from '../src/hooks/useIdleCallback';
-import idleCallbackMocker from './idleCallback';
+import idleCallbackMocker from './mock-dom-api/idleCallback';
 import { UnsupportedBehavior } from '../src/interface';
 
 describe("useIdleCallback", () => {

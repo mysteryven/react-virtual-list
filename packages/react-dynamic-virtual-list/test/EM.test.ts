@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, test } from 'vitest'
-import { begin, calculateCentroids, calculateCosine, extractPartVectors, Vector } from '../src/predictHeight/EM'
+import { begin, calculateCentroids, calculateCosine, extractPartVectors, findNearestCentroidIndex, Vector } from '../src/predictHeight/EM'
 
 
 function generatorVectorsAroundOf(aroundPoint: Vector, range: number, num: number) {
@@ -53,6 +53,32 @@ function generatorRandomVectors(num: number, vectorSize: number) {
     }
     return ret
 }
+
+describe('findNearestCentroidIndex', () => {
+    const basePoint1 = [1, 1]
+    const basePoint2 = [2, 2]
+    const initialFeatures: Vector[] = [
+        [basePoint1, 0],
+        [basePoint2, 0]
+    ];
+
+    let mockFeatures: Vector[] = [
+        [basePoint1, 0],
+        [basePoint2, 0]
+    ]
+
+    const error = 0.1
+
+    for (let feature of initialFeatures) {
+        const temp = generatorVectorsAroundOf(feature, 0.1, 4)
+        mockFeatures = mockFeatures.concat(temp)
+    }
+
+    const nearestIndex = findNearestCentroidIndex([[1, 1], 0], mockFeatures)
+    
+    const isOutOfError = false
+    feature
+})
 
 describe('calculateCosine', () => {
     it('should return 0 when angle is 90°', () => {

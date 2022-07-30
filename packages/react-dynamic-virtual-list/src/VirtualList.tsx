@@ -20,7 +20,8 @@ export const ListObserver = (props: ListObserverProps) => {
         return groupArray(indexList, dividedAreaNum)
     }, [indexList, dividedAreaNum])
 
-    // @ts-ignore
+    // The fourth param is only used to tell unit test current observing area.
+    // @ts-ignore 
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
 
     return (
