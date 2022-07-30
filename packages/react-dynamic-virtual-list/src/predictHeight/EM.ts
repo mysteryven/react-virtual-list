@@ -18,14 +18,30 @@
  * When cos close to 1, those two points are close, otherwise not.
  */
 
-export type Vector = [number[], number];
+export type Vector = number[];
 
-export function begin(featureVectors: Vector[], centroidNum: number) {
-    const initialCentroids = extractPartVectors(featureVectors, centroidNum);
-    return calculateCentroids(featureVectors, initialCentroids)
+export function beginIteration(featureVectors: Vector[], centroidNum: number) {
+    let centroids = extractPartVectors(featureVectors, centroidNum);
+
+    for (let i = 0; i < 10; i++) {
+        centroids = calculateCentroids(featureVectors, centroids)
+    }
+
+    return centroids
 }
 
 export function calculateCentroids(featureVectors: Vector[], centroids: Vector[]) {
+    let groups = groupByCentroids(featureVectors, centroids)
+
+    const newCentroids = []
+    for (let i = 0; i < groups.length; i++) {
+        newCentroids.push(calculateCenterPoint(groups[i]))
+    }
+
+    return newCentroids
+}
+
+export function groupByCentroids(featureVectors: Vector[], centroids: Vector[]) {
     let groups: Vector[][] = Array.from({ length: centroids.length }, () => [])
 
     for (let i = 0; i < featureVectors.length; i++) {
@@ -33,7 +49,19 @@ export function calculateCentroids(featureVectors: Vector[], centroids: Vector[]
         groups[index].push(featureVectors[i])
     }
 
-    return groups
+    return groups;
+}
+
+export function calculateCenterPoint(featureVectors: Vector[]) {
+    let centerPoint = new Array(featureVectors[0].length).fill(0)
+
+    for (let i = 0; i < featureVectors.length; i++) {
+        for (let j = 0; j < featureVectors[i].length; j++) {
+            centerPoint[j] += featureVectors[i][j]
+        }
+    }
+
+    return centerPoint.map(i => i / featureVectors.length)
 }
 
 export function findNearestCentroidIndex(point: Vector, centroids: Vector[]) {
@@ -54,17 +82,17 @@ export function findNearestCentroidIndex(point: Vector, centroids: Vector[]) {
 const sqrtCache = new Map<string, number>();
 
 export function calculateCosine(x: Vector, y: Vector) {
-    const consOfTwoPoint = (x[0].reduce((acc, cur, index) => acc + cur * y[0][index], 0)) / (getSqrtOfVector(x) * getSqrtOfVector(y))
+    const consOfTwoPoint = (x.reduce((acc, cur, index) => acc + cur * y[index], 0)) / (getSqrtOfVector(x) * getSqrtOfVector(y))
     return consOfTwoPoint
 }
 
 function getSqrtOfVector(vector: Vector) {
-    const cacheKey = vector[0].join(',')
+    const cacheKey = vector.join(',')
     if (sqrtCache.has(cacheKey)) {
         return sqrtCache.get(cacheKey)!
     }
 
-    const ret = Math.sqrt(vector[0].reduce((acc, cur) => acc + cur * cur, 0))
+    const ret = Math.sqrt(vector.reduce((acc, cur) => acc + cur * cur, 0))
     sqrtCache.set(cacheKey, ret)
 
     return ret

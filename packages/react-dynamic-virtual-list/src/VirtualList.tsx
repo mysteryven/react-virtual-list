@@ -1,5 +1,6 @@
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useMemo } from "react"
+import useIdleCallback from "./hooks/useIdleCallback";
 import useIntersection from "./hooks/useIntersection";
 import { ItemRendererProps, ListObserverProps, VirtualListProps } from "./interface";
 import { groupArray } from "./utils";
@@ -23,6 +24,12 @@ export const ListObserver = (props: ListObserverProps) => {
     // The fourth param is only used to tell unit test current observing area.
     // @ts-ignore 
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
+
+    const fn = useCallback(() => {
+        
+    }, [])
+
+    useIdleCallback(fn)
 
     return (
         <div ref={ref} role="list" style={{ minHeight: indexList.length * itemMinHeight }}>

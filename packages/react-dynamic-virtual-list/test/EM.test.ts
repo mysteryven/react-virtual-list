@@ -1,63 +1,38 @@
 import { beforeEach, describe, expect, it, test } from 'vitest'
-import { begin, calculateCosine, extractPartVectors, findNearestCentroidIndex, Vector } from '../src/predictHeight/EM'
-import { generatorAVectorAroundOf, generatorRandomVectors, generatorVectorsAroundOf } from './testHelper';
-
-describe("EM", () => {
-    const initialFeatures: Vector[] = [
-        [[1, 1], 0],
-        [[2, 2], 0]
-    ];
-
-    let mockFeatures: Vector[] = [
-        [[1, 1], 0],
-        [[2, 2], 0]
-    ]
-
-    for (let feature of initialFeatures) {
-        const temp = generatorVectorsAroundOf(feature, 0.1, 4)
-        mockFeatures = mockFeatures.concat(temp)
-    }
-
-    it('group vectors rightly', () => {
-        const ans = begin(mockFeatures, 2)
-
-        expect(1).toBe(1)
-    })
-})
-
-
+import { beginIteration, calculateCenterPoint, calculateCentroids, calculateCosine, extractPartVectors, findNearestCentroidIndex, groupByCentroids, Vector } from '../src/predictHeight/EM'
+import { generatorRandomVectors, generatorVectorsAroundOf } from './testHelper';
 
 describe('findNearestCentroidIndex', () => {
     test('the nearest item', () => {
         const basePoint = [1, 1]
-        const error = 0.1
-        let mockFeatures = generatorVectorsAroundOf([basePoint, 0], error, 4)
-        mockFeatures = mockFeatures.concat(generatorVectorsAroundOf([basePoint, 0], error * 2, 4))
-        mockFeatures = mockFeatures.concat(generatorVectorsAroundOf([basePoint, 0], error * 4, 4))
+        let mockFeatures = [
+            [2, 2.011],
+            [2, 2.111],
+            [3, 3.1123]
+        ]
 
-        const randomVector = generatorAVectorAroundOf([basePoint, 0], error)
-        const nearestIndex = findNearestCentroidIndex(randomVector, mockFeatures)
-        const nearestFeature = mockFeatures[nearestIndex][0]
+        const nearestIndex = findNearestCentroidIndex(basePoint, mockFeatures)
+        const nearestFeature = mockFeatures[nearestIndex]
 
-        for (let i = 0; i < randomVector[0].length; i++) {
-            expect(Math.abs(randomVector[0][i] - nearestFeature[i]) < error).toBe(true)
+        for (let i = 0; i < basePoint.length; i++) {
+            expect(nearestFeature).toStrictEqual([2, 2.011])
         }
     })
 })
 
 describe('calculateCosine', () => {
     it('should return 0 when angle is 90°', () => {
-        expect(calculateCosine([[0, 1], 0], [[1, 0], 0])).toBe(0)
-        expect(calculateCosine([[0, 100], 0], [[1, 0], 0])).toBe(0)
+        expect(calculateCosine([0, 1], [1, 0])).toBe(0)
+        expect(calculateCosine([0, 100], [1, 0])).toBe(0)
     })
 
     it('should return 1 when angle is 0°', () => {
-        expect(calculateCosine([[0, 1], 0], [[0, 1], 0])).toBe(1)
-        expect(calculateCosine([[0, 100], 0], [[0, 1], 0])).toBe(1)
+        expect(calculateCosine([0, 1], [0, 1])).toBe(1)
+        expect(calculateCosine([0, 100], [0, 1])).toBe(1)
     })
 
     it('should return 0.5 when angle is 60°', () => {
-        expect((calculateCosine([[1, 0], 0], [[1, Math.sqrt(3)], 0]).toFixed(1))).toBe('0.5')
+        expect((calculateCosine([1, 0], [1, Math.sqrt(3)]).toFixed(1))).toBe('0.5')
     })
 })
 
@@ -77,9 +52,7 @@ describe('getRandomVectors', () => {
         const extractedVectors = extractPartVectors(vectors, 1);
 
         for (let v of extractedVectors) {
-            expect(v.length).equal(2)
-            expect(Array.isArray(v[0])).equal(true)
-            expect(typeof v[1]).equal('number')
+            expect(Array.isArray(v)).equal(true)
         }
     })
 
@@ -93,5 +66,58 @@ describe('getRandomVectors', () => {
 })
 
 describe('calculateCentroids', () => {
-    
+    test('it get right group', () => {
+
+        const myFeatureVectors: Vector[] = [
+            [1, 1], [1, 1.11], [1, 1.111], [1, 1.01], [1, 1.1111], 
+            [2, 4], [2, 4.1], [2, 4.12], [2, 4.123], [2, 4.123123]
+        ]
+
+        const centroidsNum = 2
+
+        const initialCentroids = extractPartVectors(myFeatureVectors, centroidsNum);
+
+        let newCentroids: Vector[] = []
+        newCentroids = calculateCentroids(myFeatureVectors, initialCentroids)
+        for (let i = 0; i < 10; i++) {
+            calculateCentroids(myFeatureVectors, newCentroids)
+        }
+
+        const ret = groupByCentroids(myFeatureVectors, newCentroids)
+
+        expect(ret).toStrictEqual(
+            [
+                [
+                    [1, 1],
+                    [1, 1.11],
+                    [1, 1.111],
+                    [1, 1.01],
+                    [1, 1.1111],
+                ],
+                [
+                    [2, 4],
+                    [2, 4.1],
+                    [2, 4.12],
+                    [2, 4.123],
+                    [2, 4.123123],
+                ],
+            ]
+        )
+    })
 });
+
+test('calculateCenterPoint', () => {
+    expect(calculateCenterPoint([
+        [1, 1],
+        [3, 3]
+    ])).toStrictEqual([2, 2])
+})
+
+test('beginIteration', () => {
+    const myFeatureVectors: Vector[] = [
+        [1, 1], [1, 1.11], [1, 1.111], [1, 1.01], [1, 1.1111], 
+        [2, 4], [2, 4.1], [2, 4.12], [2, 4.123], [2, 4.123123]
+    ]
+
+    expect(beginIteration(myFeatureVectors, 2).length).toEqual(2)
+})

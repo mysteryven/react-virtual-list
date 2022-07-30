@@ -1,10 +1,10 @@
 import { Vector } from "../src/predictHeight/EM";
 
 export function generatorAVectorAroundOf(aroundPoint: Vector, range: number) {
-    let nextPoint: Vector = [[], 0]
-    aroundPoint[0].forEach(feature => {
+    let nextPoint: Vector = []
+    aroundPoint.forEach(feature => {
         const addOrMinusWeight = (Math.random() > 0.5 ? 1 : -1) * range * Math.random()
-        nextPoint[0].push(feature + addOrMinusWeight)
+        nextPoint.push(feature + addOrMinusWeight)
     })
     return nextPoint;
 }
@@ -27,7 +27,7 @@ export function generatorRandomVectors(num: number, vectorSize: number) {
         for (let j = 0; j < vectorSize; j++) {
             aVector.push(Math.random())
         }
-        ret.push([aVector, Math.random()])
+        ret.push(aVector)
     }
     return ret
 }
