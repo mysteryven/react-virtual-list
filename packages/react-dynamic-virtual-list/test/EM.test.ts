@@ -1,25 +1,6 @@
 import { beforeEach, describe, expect, it, test } from 'vitest'
 import { begin, calculateCosine, extractPartVectors, findNearestCentroidIndex, Vector } from '../src/predictHeight/EM'
-
-
-function generatorAVectorAroundOf(aroundPoint: Vector, range: number) {
-    let nextPoint: Vector = [[], 0]
-    aroundPoint[0].forEach(feature => {
-        const addOrMinusWeight = (Math.random() > 0.5 ? 1 : -1) * range * Math.random()
-        nextPoint[0].push(feature + addOrMinusWeight)
-    })
-    return nextPoint;
-}
-
-function generatorVectorsAroundOf(aroundPoint: Vector, range: number, num: number) {
-    const ret: Vector[] = []
-
-    for (let i = 0; i < num; i++) {
-        ret.push(generatorAVectorAroundOf(aroundPoint, range))
-    }
-
-    return ret
-}
+import { generatorAVectorAroundOf, generatorRandomVectors, generatorVectorsAroundOf } from './testHelper';
 
 describe("EM", () => {
     const initialFeatures: Vector[] = [
@@ -44,18 +25,7 @@ describe("EM", () => {
     })
 })
 
-function generatorRandomVectors(num: number, vectorSize: number) {
-    let ret: Vector[] = []
-    for (let i = 0; i < num; i++) {
-        let aVector = []
 
-        for (let j = 0; j < vectorSize; j++) {
-            aVector.push(Math.random())
-        }
-        ret.push([aVector, Math.random()])
-    }
-    return ret
-}
 
 describe('findNearestCentroidIndex', () => {
     test('the nearest item', () => {
@@ -122,8 +92,6 @@ describe('getRandomVectors', () => {
     })
 })
 
-test('calculateCentroids', () => {
-    const featureVectors = [
-        [1, 1],
-    ]
+describe('calculateCentroids', () => {
+    
 });
