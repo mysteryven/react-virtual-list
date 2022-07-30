@@ -1,45 +1,48 @@
 import { beforeEach, describe, expect, it, test } from 'vitest'
-import { begin, calculateCentroids, calculateCosine, extractPartVectors, findNearestCentroidIndex, Vector } from '../src/predictHeight/EM'
+import { begin, calculateCosine, extractPartVectors, findNearestCentroidIndex, Vector } from '../src/predictHeight/EM'
 
+
+function generatorAVectorAroundOf(aroundPoint: Vector, range: number) {
+    let nextPoint: Vector = [[], 0]
+    aroundPoint[0].forEach(feature => {
+        const addOrMinusWeight = (Math.random() > 0.5 ? 1 : -1) * range * Math.random()
+        nextPoint[0].push(feature + addOrMinusWeight)
+    })
+    return nextPoint;
+}
 
 function generatorVectorsAroundOf(aroundPoint: Vector, range: number, num: number) {
     const ret: Vector[] = []
 
     for (let i = 0; i < num; i++) {
-        let nextPoint: Vector = [[], 0]
-        aroundPoint[0].forEach(feature => {
-            const addOrMinusWeight = (Math.random() > 0.5 ? 1 : -1) * range * Math.random()
-            nextPoint[0].push(feature + addOrMinusWeight)
-        })
-        ret.push(nextPoint)
+        ret.push(generatorAVectorAroundOf(aroundPoint, range))
     }
 
     return ret
 }
 
-// describe("EM", () => {
-//     const initialFeatures: Vector[] = [
-//         [[1, 1], 0],
-//         [[2, 2], 0]
-//     ];
+describe("EM", () => {
+    const initialFeatures: Vector[] = [
+        [[1, 1], 0],
+        [[2, 2], 0]
+    ];
 
-//     let mockFeatures: Vector[] = [
-//         [[1, 1], 0],
-//         [[2, 2], 0]
-//     ]
+    let mockFeatures: Vector[] = [
+        [[1, 1], 0],
+        [[2, 2], 0]
+    ]
 
-//     for (let feature of initialFeatures) {
-//         const temp = generatorVectorsAroundOf(feature, 0.1, 4)
-//         mockFeatures = mockFeatures.concat(temp)
-//     }
+    for (let feature of initialFeatures) {
+        const temp = generatorVectorsAroundOf(feature, 0.1, 4)
+        mockFeatures = mockFeatures.concat(temp)
+    }
 
-//     it('group vectors rightly', () => {
-//         console.log(mockFeatures)
-//         const ans = begin(mockFeatures, 2)
+    it('group vectors rightly', () => {
+        const ans = begin(mockFeatures, 2)
 
-//         expect(1).toBe(1)
-//     })
-// })
+        expect(1).toBe(1)
+    })
+})
 
 function generatorRandomVectors(num: number, vectorSize: number) {
     let ret: Vector[] = []
@@ -55,29 +58,21 @@ function generatorRandomVectors(num: number, vectorSize: number) {
 }
 
 describe('findNearestCentroidIndex', () => {
-    const basePoint1 = [1, 1]
-    const basePoint2 = [2, 2]
-    const initialFeatures: Vector[] = [
-        [basePoint1, 0],
-        [basePoint2, 0]
-    ];
+    test('the nearest item', () => {
+        const basePoint = [1, 1]
+        const error = 0.1
+        let mockFeatures = generatorVectorsAroundOf([basePoint, 0], error, 4)
+        mockFeatures = mockFeatures.concat(generatorVectorsAroundOf([basePoint, 0], error * 2, 4))
+        mockFeatures = mockFeatures.concat(generatorVectorsAroundOf([basePoint, 0], error * 4, 4))
 
-    let mockFeatures: Vector[] = [
-        [basePoint1, 0],
-        [basePoint2, 0]
-    ]
+        const randomVector = generatorAVectorAroundOf([basePoint, 0], error)
+        const nearestIndex = findNearestCentroidIndex(randomVector, mockFeatures)
+        const nearestFeature = mockFeatures[nearestIndex][0]
 
-    const error = 0.1
-
-    for (let feature of initialFeatures) {
-        const temp = generatorVectorsAroundOf(feature, 0.1, 4)
-        mockFeatures = mockFeatures.concat(temp)
-    }
-
-    const nearestIndex = findNearestCentroidIndex([[1, 1], 0], mockFeatures)
-    
-    const isOutOfError = false
-    feature
+        for (let i = 0; i < randomVector[0].length; i++) {
+            expect(Math.abs(randomVector[0][i] - nearestFeature[i]) < error).toBe(true)
+        }
+    })
 })
 
 describe('calculateCosine', () => {
