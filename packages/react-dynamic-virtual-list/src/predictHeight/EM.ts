@@ -20,12 +20,40 @@
 
 export type Vector = number[];
 
-export function beginIteration(featureVectors: Vector[], centroidNum: number) {
+export function beginIteration(
+    featureVectors: Vector[],
+    centroidNum: number,
+    heightRecord: Record<string, number>
+) {
     let centroids = extractPartVectors(featureVectors, centroidNum);
 
     for (let i = 0; i < 10; i++) {
         centroids = calculateCentroids(featureVectors, centroids)
     }
+
+    const centroidsHeight: number[] = [];
+
+    let indexOfGroup: number[][] = Array.from({ length: centroids.length }, () => [])
+
+    for (let i = 0; i < featureVectors.length; i++) {
+        const index = findNearestCentroidIndex(featureVectors[i], centroids)
+        indexOfGroup[index].push(i)
+    }
+
+    for (let i = 0; i < indexOfGroup.length; i++) {
+        const aGroup = indexOfGroup[i]
+        let height = 0
+
+        for (let i = 0; i < aGroup.length; i++) {
+            const cacheKey = featureVectors[aGroup[i]].join("-")
+            height += (heightRecord[cacheKey] || 0)
+        }
+
+
+        centroidsHeight[i] = height / aGroup.length
+    }
+
+    console.log(centroidsHeight, 'centroidsHeight')
 
     return centroids
 }
@@ -53,15 +81,26 @@ export function groupByCentroids(featureVectors: Vector[], centroids: Vector[]) 
 }
 
 export function calculateCenterPoint(featureVectors: Vector[]) {
-    let centerPoint = new Array(featureVectors[0].length).fill(0)
-
-    for (let i = 0; i < featureVectors.length; i++) {
-        for (let j = 0; j < featureVectors[i].length; j++) {
-            centerPoint[j] += featureVectors[i][j]
-        }
+    if (featureVectors.length === 0) {
+        return []
     }
 
-    return centerPoint.map(i => i / featureVectors.length)
+    try {
+        let centerPoint = new Array(featureVectors[0].length).fill(0)
+        for (let i = 0; i < featureVectors.length; i++) {
+            for (let j = 0; j < featureVectors[i].length; j++) {
+                centerPoint[j] += featureVectors[i][j]
+            }
+        }
+
+        return centerPoint.map(i => i / featureVectors.length)
+    } catch (e) {
+        console.error(e)
+        console.error(featureVectors)
+    }
+
+
+
 }
 
 export function findNearestCentroidIndex(point: Vector, centroids: Vector[]) {

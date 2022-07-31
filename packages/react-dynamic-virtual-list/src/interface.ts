@@ -1,4 +1,5 @@
 import { FunctionComponent } from "react";
+import { Vector } from "./predictHeight/EM";
 
 export interface ChildItemProps {
     index: number
@@ -8,6 +9,7 @@ export interface VirtualListProps {
     dividedAreaNum: number;
     itemCount: number;
     itemMinHeight: number;
+    factors?: Vector[]
 }
 
 export interface ListObserverProps {

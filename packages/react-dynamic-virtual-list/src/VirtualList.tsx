@@ -1,14 +1,31 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMemo } from "react"
 import useIdleCallback from "./hooks/useIdleCallback";
 import useIntersection from "./hooks/useIntersection";
 import { ItemRendererProps, ListObserverProps, VirtualListProps } from "./interface";
 import { groupArray } from "./utils";
+import DB from './predictHeight/db'
+
+const db = new DB();
+(window as any).db = db;
 
 export const ItemRenderer = (props: ItemRendererProps) => {
+    const [height, setHeight] = useState<number>(0);
+
+    const measuredRef = useCallback((node: HTMLDivElement) => {
+        if (node !== null) {
+            setHeight(node.getBoundingClientRect().height);
+        }
+    }, []);
+    
+    useIdleCallback(() => {
+        // db.restoreFromCache()
+        db.addToListLib(props.index, height)
+    })
+
     return (
-        <div role="item">
-            {props.children({index: props.index})}
+        <div role="item" ref={measuredRef}>
+            {props.children({ index: props.index })}
         </div>
     )
 }
@@ -24,12 +41,6 @@ export const ListObserver = (props: ListObserverProps) => {
     // The fourth param is only used to tell unit test current observing area.
     // @ts-ignore 
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
-
-    const fn = useCallback(() => {
-        
-    }, [])
-
-    useIdleCallback(fn)
 
     return (
         <div ref={ref} role="list" style={{ minHeight: indexList.length * itemMinHeight }}>
@@ -62,18 +73,21 @@ export const ListObserver = (props: ListObserverProps) => {
 }
 
 const VirtualList = (props: VirtualListProps) => {
-    const { itemCount, dividedAreaNum } = props
+    const { itemCount, dividedAreaNum, factors } = props
     const groupList = useMemo(() => {
         const arr = Array.from({ length: itemCount }, (_, index) => index)
         return groupArray(arr, dividedAreaNum)
     }, [itemCount, dividedAreaNum])
 
+    useEffect(() => {
+        db.initWaitToPredictList(factors || [])
+    }, [factors])
+
     return (
         <>
             {
                 groupList.map((item, index) => (
-                    <ListObserver
-                        key={index}
+                    <ListObserver key={index}
                         itemMinHeight={props.itemMinHeight}
                         dividedAreaNum={props.dividedAreaNum}
                         indexList={item}

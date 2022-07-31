@@ -1,14 +1,28 @@
-import { useMemo, useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
 import VirtualList, { ChildItemProps } from 'react-dynamic-virtual-list'
 
+const str = `
+  Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.
+  Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.
+  Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.
+`;
+
+const originalList = new Array(1000).fill(0).map(i => {
+  return {
+    memo: str.slice(Math.floor(Math.random() * str.length)),
+    images: new Array(Math.floor(Math.random() * 10)).fill(0)
+  }
+})
+
 function App() {
-  const originalList = useMemo(() => Array.from(Array(1000).keys()), []);
+
+  const factors = originalList.map(i => {
+    return [i.memo.length, i.images.length]
+  })
 
   return (
     <div>
-      <VirtualList dividedAreaNum={10} itemCount={1000} itemMinHeight={40}>
+      <VirtualList dividedAreaNum={10} itemCount={1000} itemMinHeight={40} factors={factors}>
         {
           (props) => <ListItem index={props.index} />
         }
@@ -17,19 +31,25 @@ function App() {
   )
 }
 
-
-
 function ListItem(props: ChildItemProps) {
-  const str = 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.'
-  const times = Math.floor(10 * Math.random())
+  const index = props.index
 
   return (
     <div className="item">
       <h1 className="left">
-        {props.index}
+        {index}
       </h1>
       <div className="right">
-        {str.repeat(times)}
+        <div style={{ fontSize: '34px', lineHeight: '1.4' }}>
+          {originalList[index].memo}
+        </div>
+        <div>
+          {
+            originalList[index].images.map((_, i) => (
+              <div key={i} className="image"></div>
+            ))
+          }
+        </div>
       </div>
     </div>
   )

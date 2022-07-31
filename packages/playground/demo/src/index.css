@@ -103,4 +103,15 @@ button:focus-visible {
 
 .right {
   width: 90%;
+  display: flex;
+  gap: 10px 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.image {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
 }
