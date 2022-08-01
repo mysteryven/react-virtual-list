@@ -35,7 +35,7 @@ export default class DB<T extends Vector> {
     }
 
     isReadyToPredict() {
-        if (this.allList.length < 40) {
+        if (this.allList.length < 1000) {
             return false
         }
 
@@ -67,6 +67,8 @@ export default class DB<T extends Vector> {
         window.localStorage.setItem('xxx', JSON.stringify(this.allList))
 
         if (this.isReadyToPredict()) {
+            console.log('has read to predict')
+            this.DBStatus = DBStatus.finished
             console.log(beginIteration(this.allList, 10, {}))
         }
     }

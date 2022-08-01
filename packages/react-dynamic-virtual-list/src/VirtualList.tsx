@@ -2,9 +2,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useMemo } from "react"
 import useIdleCallback from "./hooks/useIdleCallback";
 import useIntersection from "./hooks/useIntersection";
-import { ItemRendererProps, ListObserverProps, VirtualListProps } from "./interface";
+import { ItemRendererProps, ListObserverProps, UnsupportedBehavior, VirtualListProps } from "./interface";
 import { groupArray } from "./utils";
 import DB from './predictHeight/db'
+import useDbPredictFinished from "./hooks/useDbPredictFinished";
+
+requestIdleCallback = null
 
 const db = new DB();
 (window as any).db = db;
@@ -21,7 +24,7 @@ export const ItemRenderer = (props: ItemRendererProps) => {
     useIdleCallback(() => {
         // db.restoreFromCache()
         db.addToListLib(props.index, height)
-    })
+    }, undefined, UnsupportedBehavior.immediate)
 
     return (
         <div role="item" ref={measuredRef}>
@@ -82,6 +85,11 @@ const VirtualList = (props: VirtualListProps) => {
     useEffect(() => {
         db.initWaitToPredictList(factors || [])
     }, [factors])
+
+    useDbPredictFinished(db, (vectors) => {
+        console.log(groupList, 'groupList')
+        console.log(factors)
+    })
 
     return (
         <>
