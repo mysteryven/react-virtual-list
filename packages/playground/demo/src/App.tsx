@@ -7,7 +7,7 @@ const str = `
   Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.
 `;
 
-const originalList = new Array(1000).fill(0).map(i => {
+const originalList = new Array(100).fill(0).map(i => {
   return {
     memo: str.slice(Math.floor(Math.random() * str.length)),
     images: new Array(Math.floor(Math.random() * 10)).fill(0)

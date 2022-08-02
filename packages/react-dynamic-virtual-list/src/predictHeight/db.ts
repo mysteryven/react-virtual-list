@@ -1,4 +1,4 @@
-import { beginIteration, Vector } from "./EM"
+import { beginIteration, findNearestCentroidIndex, Vector } from "./EM"
 
 export enum DBStatus {
     empty,
@@ -7,17 +7,18 @@ export enum DBStatus {
     finished
 }
 
-export default class DB<T extends Vector> {
-    weight: Map<keyof T, number> = new Map()
+export default class DB {
+    weight: Map<keyof Vector, number> = new Map()
     // {a: number, b: string}
-    allList: T[] = []
+    allList: Vector[] = []
     itemToHeightMap: Record<string, number> = {}
     DBStatus: DBStatus = DBStatus.empty
-    waitToPredictList: T[] = []
+    waitToPredictList: Vector[] = []
+    listeners: ((heights: number[]) => void)[] = []
 
     constructor() { }
 
-    initWeight(weight: Map<keyof T, number>) {
+    initWeight(weight: Map<keyof Vector, number>) {
         this.weight = weight
     }
 
@@ -30,12 +31,20 @@ export default class DB<T extends Vector> {
         this.allList = JSON.parse(cache)
     }
 
-    initWaitToPredictList(list: T[]) {
+    initWaitToPredictList(list: Vector[]) {
         this.waitToPredictList = list
     }
 
+    addListener(callback: (heights: number[]) => void) {
+        this.listeners.push(callback)
+    }
+
+    removeListener(callback: (heights: number[]) => void) {
+        this.listeners = this.listeners.filter(item => item !== callback)
+    }
+
     isReadyToPredict() {
-        if (this.allList.length < 1000) {
+        if (this.allList.length < 100) {
             return false
         }
 
@@ -44,12 +53,12 @@ export default class DB<T extends Vector> {
 
     addToListLib(index: number, height: number) {
         if (this.DBStatus === DBStatus.computing) {
-            console.warn('not need add any more.')
+            // console.warn('not need add any more.')
             return
         }
 
         if (this.DBStatus === DBStatus.finished) {
-            console.warn('has finished compute.')
+            // console.warn('has finished compute.')
             return
         }
 
@@ -64,16 +73,34 @@ export default class DB<T extends Vector> {
 
         this.allList.push(item)
 
-        window.localStorage.setItem('xxx', JSON.stringify(this.allList))
+        // window.localStorage.setItem('xxx', JSON.stringify(this.allList))
 
         if (this.isReadyToPredict()) {
             console.log('has read to predict')
             this.DBStatus = DBStatus.finished
-            console.log(beginIteration(this.allList, 10, {}))
+            const { centroids, centroidsHeight } = beginIteration(this.allList, 10, this.itemToHeightMap)
+
+            console.log(centroidsHeight, '--')
+            const heights = this.predict(centroids, centroidsHeight) 
+
+            console.log('real-heights', this.itemToHeightMap)
+            this.listeners.forEach(listener => {
+                listener(heights)
+            })
         }
     }
 
-    getList(): T[] {
+    predict(centroids: Vector[], centroidsHeight: number[]) {
+        const heights: number[] = []
+        this.waitToPredictList.forEach(item => {
+            const nearestIndex = findNearestCentroidIndex(item, centroids)
+            heights.push(centroidsHeight[nearestIndex])
+        })
+
+        return heights;
+    }
+
+    getList(): Vector[] {
         return []
     }
 }

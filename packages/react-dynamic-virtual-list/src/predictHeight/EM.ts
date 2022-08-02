@@ -49,11 +49,13 @@ export function beginIteration(
             height += (heightRecord[cacheKey] || 0)
         }
 
-
         centroidsHeight[i] = height / aGroup.length
     }
 
-    return centroids
+    return {
+        centroids,
+        centroidsHeight
+    }
 }
 
 export function calculateCentroids(featureVectors: Vector[], centroids: Vector[]) {

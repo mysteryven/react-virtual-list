@@ -5,33 +5,46 @@ import useIntersection from "./hooks/useIntersection";
 import { ItemRendererProps, ListObserverProps, UnsupportedBehavior, VirtualListProps } from "./interface";
 import { groupArray } from "./utils";
 import DB from './predictHeight/db'
-import useDbPredictFinished from "./hooks/useDbPredictFinished";
+import useDBPredictFinished from "./hooks/useDBPredictFinished";
 
+// @ts-ignore
 requestIdleCallback = null
 
 const db = new DB();
 (window as any).db = db;
 
-export const ItemRenderer = (props: ItemRendererProps) => {
-    const [height, setHeight] = useState<number>(0);
+const VirtualList = (props: VirtualListProps) => {
+    const { itemCount, dividedAreaNum, factors } = props
+    const groupList = useMemo(() => {
+        const arr = Array.from({ length: itemCount }, (_, index) => index)
+        return groupArray(arr, dividedAreaNum)
+    }, [itemCount, dividedAreaNum])
 
-    const measuredRef = useCallback((node: HTMLDivElement) => {
-        if (node !== null) {
-            setHeight(node.getBoundingClientRect().height);
-        }
-    }, []);
-    
-    useIdleCallback(() => {
-        // db.restoreFromCache()
-        db.addToListLib(props.index, height)
-    }, undefined, UnsupportedBehavior.immediate)
+    useEffect(() => {
+        db.initWaitToPredictList(factors || [])
+    }, [factors])
+
+    useDBPredictFinished(db, (heights) => {
+        console.log(heights, 'heights')
+    })
 
     return (
-        <div role="item" ref={measuredRef}>
-            {props.children({ index: props.index })}
-        </div>
+        <>
+            {
+                groupList.map((item, index) => (
+                    <ListObserver key={index}
+                        itemMinHeight={props.itemMinHeight}
+                        dividedAreaNum={props.dividedAreaNum}
+                        indexList={item}
+                        isObserving={true}
+                        children={props.children}
+                    />
+                ))
+            }
+        </>
     )
 }
+
 
 export const ListObserver = (props: ListObserverProps) => {
     const { indexList, children, dividedAreaNum, isObserving, itemMinHeight } = props
@@ -75,36 +88,24 @@ export const ListObserver = (props: ListObserverProps) => {
     )
 }
 
-const VirtualList = (props: VirtualListProps) => {
-    const { itemCount, dividedAreaNum, factors } = props
-    const groupList = useMemo(() => {
-        const arr = Array.from({ length: itemCount }, (_, index) => index)
-        return groupArray(arr, dividedAreaNum)
-    }, [itemCount, dividedAreaNum])
+export const ItemRenderer = (props: ItemRendererProps) => {
+    const [height, setHeight] = useState<number>(0);
 
-    useEffect(() => {
-        db.initWaitToPredictList(factors || [])
-    }, [factors])
-
-    useDbPredictFinished(db, (vectors) => {
-        console.log(groupList, 'groupList')
-        console.log(factors)
-    })
+    const measuredRef = useCallback((node: HTMLDivElement) => {
+        if (node !== null) {
+            setHeight(node.getBoundingClientRect().height);
+        }
+    }, []);
+    
+    useIdleCallback(() => {
+        // db.restoreFromCache()
+        db.addToListLib(props.index, height)
+    }, undefined, UnsupportedBehavior.immediate)
 
     return (
-        <>
-            {
-                groupList.map((item, index) => (
-                    <ListObserver key={index}
-                        itemMinHeight={props.itemMinHeight}
-                        dividedAreaNum={props.dividedAreaNum}
-                        indexList={item}
-                        isObserving={true}
-                        children={props.children}
-                    />
-                ))
-            }
-        </>
+        <div role="item" ref={measuredRef}>
+            {props.children({ index: props.index })}
+        </div>
     )
 }
 
