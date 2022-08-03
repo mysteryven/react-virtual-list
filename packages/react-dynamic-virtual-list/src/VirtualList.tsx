@@ -19,13 +19,15 @@ const VirtualList = (props: VirtualListProps) => {
         const arr = Array.from({ length: itemCount }, (_, index) => index)
         return groupArray(arr, dividedAreaNum)
     }, [itemCount, dividedAreaNum])
+    const [heights, setHeights] = useState<number[]>([])
 
     useEffect(() => {
         db.initWaitToPredictList(factors || [])
     }, [factors])
 
     useDBPredictFinished(db, (heights) => {
-        console.log(heights, 'heights')
+        setHeights(heights)
+        console.log(heights)
     })
 
     return (
@@ -36,6 +38,7 @@ const VirtualList = (props: VirtualListProps) => {
                         itemMinHeight={props.itemMinHeight}
                         dividedAreaNum={props.dividedAreaNum}
                         indexList={item}
+                        heights={heights}
                         isObserving={true}
                         children={props.children}
                     />
@@ -45,9 +48,8 @@ const VirtualList = (props: VirtualListProps) => {
     )
 }
 
-
 export const ListObserver = (props: ListObserverProps) => {
-    const { indexList, children, dividedAreaNum, isObserving, itemMinHeight } = props
+    const { indexList, children, dividedAreaNum, isObserving, itemMinHeight, heights } = props
     const ref = useRef<HTMLDivElement>(null)
 
     const groupedList = useMemo(() => {
@@ -58,8 +60,16 @@ export const ListObserver = (props: ListObserverProps) => {
     // @ts-ignore 
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
 
+    const minHeight = heights.length > 0
+        ? indexList.reduce((prev, cur) => prev + heights[cur], 0)
+        : indexList.length * itemMinHeight
+
+    if (Number.isNaN(minHeight))  {
+        debugger
+    }    
+
     return (
-        <div ref={ref} role="list" style={{ minHeight: indexList.length * itemMinHeight }}>
+        <div ref={ref} role="list" style={{minHeight}}>
             {
                 intersectionObserverEntry && intersectionObserverEntry.isIntersecting ?
                     <>
@@ -74,6 +84,7 @@ export const ListObserver = (props: ListObserverProps) => {
                                             indexList={subGroupedList}
                                             children={children}
                                             dividedAreaNum={dividedAreaNum}
+                                            heights={heights}
                                             itemMinHeight={itemMinHeight}
                                             isObserving={intersectionObserverEntry.isIntersecting}
                                         />
@@ -96,10 +107,12 @@ export const ItemRenderer = (props: ItemRendererProps) => {
             setHeight(node.getBoundingClientRect().height);
         }
     }, []);
-    
+
     useIdleCallback(() => {
         // db.restoreFromCache()
-        db.addToListLib(props.index, height)
+        if (height > 0) {
+            db.addToListLib(props.index, height)
+        }
     }, undefined, UnsupportedBehavior.immediate)
 
     return (

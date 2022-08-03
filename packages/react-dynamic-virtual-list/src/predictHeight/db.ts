@@ -80,10 +80,8 @@ export default class DB {
             this.DBStatus = DBStatus.finished
             const { centroids, centroidsHeight } = beginIteration(this.allList, 10, this.itemToHeightMap)
 
-            console.log(centroidsHeight, '--')
             const heights = this.predict(centroids, centroidsHeight) 
 
-            console.log('real-heights', this.itemToHeightMap)
             this.listeners.forEach(listener => {
                 listener(heights)
             })
