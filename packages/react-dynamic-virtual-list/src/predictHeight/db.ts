@@ -23,12 +23,14 @@ export default class DB {
     }
 
     restoreFromCache() {
-        const cache = window.localStorage.getItem('xxx');
-        if (!cache) {
+        const cache = window.localStorage.getItem('x');
+        const cache2 = window.localStorage.getItem('y')
+        if (!cache || !cache2) {
             return
         }
 
         this.allList = JSON.parse(cache)
+        this.itemToHeightMap = JSON.parse(cache2)
     }
 
     initWaitToPredictList(list: Vector[]) {
@@ -44,7 +46,7 @@ export default class DB {
     }
 
     isReadyToPredict() {
-        if (this.allList.length < 100) {
+        if (this.allList.length < 1000) {
             return false
         }
 
@@ -73,12 +75,13 @@ export default class DB {
 
         this.allList.push(item)
 
-        // window.localStorage.setItem('xxx', JSON.stringify(this.allList))
+        window.localStorage.setItem('x', JSON.stringify(this.allList))
+        window.localStorage.setItem('y', JSON.stringify(this.itemToHeightMap))
 
         if (this.isReadyToPredict()) {
             console.log('has read to predict')
             this.DBStatus = DBStatus.finished
-            const { centroids, centroidsHeight } = beginIteration(this.allList, 10, this.itemToHeightMap)
+            const { centroids, centroidsHeight } = beginIteration(this.allList, 200, this.itemToHeightMap)
 
             const heights = this.predict(centroids, centroidsHeight) 
 

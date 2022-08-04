@@ -23,6 +23,7 @@ const VirtualList = (props: VirtualListProps) => {
 
     useEffect(() => {
         db.initWaitToPredictList(factors || [])
+        db.restoreFromCache()
     }, [factors])
 
     useDBPredictFinished(db, (heights) => {
@@ -109,7 +110,6 @@ export const ItemRenderer = (props: ItemRendererProps) => {
     }, []);
 
     useIdleCallback(() => {
-        // db.restoreFromCache()
         if (height > 0) {
             db.addToListLib(props.index, height)
         }

@@ -10,7 +10,7 @@ const str = `
 const originalList = new Array(100).fill(0).map(i => {
   return {
     memo: str.slice(Math.floor(Math.random() * str.length)),
-    images: new Array(Math.floor(Math.random() * 10)).fill(0)
+    images: new Array(Math.floor(Math.random() * 30)).fill(0)
   }
 })
 
