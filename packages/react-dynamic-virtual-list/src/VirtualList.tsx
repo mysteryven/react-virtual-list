@@ -7,6 +7,7 @@ import { groupArray } from "./utils";
 import DB from './predictHeight/db'
 import useDBPredictFinished from "./hooks/useDBPredictFinished";
 import useTrackingValue from "./hooks/useTrackingValue";
+import useList from "./hooks/useList";
 
 // @ts-ignore
 // requestIdleCallback = null
@@ -16,11 +17,13 @@ const db = new DB();
 
 const VirtualList = (props: VirtualListProps) => {
     const { itemCount, dividedAreaNum, factors } = props
+
     const groupList = useMemo(() => {
         const arr = Array.from({ length: itemCount }, (_, index) => index)
         return groupArray(arr, dividedAreaNum)
     }, [itemCount, dividedAreaNum])
-    const [heights, setHeights] = useState<number[]>([])
+
+    const [heights, actions] = useList<number>([])
 
     useEffect(() => {
         db.initWaitToPredictList(factors || [])
@@ -28,9 +31,16 @@ const VirtualList = (props: VirtualListProps) => {
     }, [factors])
 
     useDBPredictFinished(db, (heights) => {
-        setHeights(heights)
-        console.log(heights)
+        actions.set(heights)
     })
+
+    function handleItemHeightChange(index: number, height: number) {
+        if (heights.length === 0) {
+            return
+        }
+
+        actions.update(index, height)
+    }
 
     return (
         <>
@@ -43,6 +53,7 @@ const VirtualList = (props: VirtualListProps) => {
                         heights={heights}
                         isObserving={true}
                         children={props.children}
+                        onItemHeightChange={handleItemHeightChange}
                     />
                 ))
             }
@@ -53,6 +64,7 @@ const VirtualList = (props: VirtualListProps) => {
 export const ListObserver = (props: ListObserverProps) => {
     const { indexList, children, dividedAreaNum, isObserving, itemMinHeight, heights } = props
     const ref = useRef<HTMLDivElement>(null)
+    const prevMinHeight = useRef<number>();
 
     const groupedList = useMemo(() => {
         return groupArray(indexList, dividedAreaNum)
@@ -64,7 +76,18 @@ export const ListObserver = (props: ListObserverProps) => {
 
     const minHeight = heights.length > 0
         ? indexList.reduce((prev, cur) => prev + heights[cur], 0)
-        : indexList.length * itemMinHeight
+        : indexList.length * itemMinHeight;
+    
+    useEffect(() => {
+        prevMinHeight.current = minHeight
+    })
+
+    if (minHeight !== prevMinHeight.current) {
+        console.log('height update', `${indexList[0]}-${indexList[indexList.length - 1]}`, prevMinHeight, minHeight)
+    } else {
+        console.log('height update', `${indexList[0]}-${indexList[indexList.length - 1]}`, prevMinHeight, minHeight)
+    }
+    
 
     return (
         <div ref={ref} role="list" style={{ minHeight }}>
@@ -76,11 +99,16 @@ export const ListObserver = (props: ListObserverProps) => {
                                 if (subGroupedList.length === 1) {
                                     return (
                                         <ItemRenderer
-                                         key={index} index={subGroupedList[0]} children={props.children} />
+                                            onItemHeightChange={props.onItemHeightChange}
+                                            key={index}
+                                            index={subGroupedList[0]}
+                                            children={props.children}
+                                        />
                                     )
                                 } else {
                                     return (
                                         <ListObserver
+                                            onItemHeightChange={props.onItemHeightChange}
                                             key={index}
                                             indexList={subGroupedList}
                                             children={children}

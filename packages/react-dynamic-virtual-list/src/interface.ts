@@ -18,7 +18,8 @@ export interface ListObserverProps {
     dividedAreaNum: number;
     itemMinHeight: number
     isObserving: boolean;
-    heights: number[]
+    heights: number[];
+    onItemHeightChange: (index: number, height: number) => void;
 }
 
 export interface ItemRendererProps {
