@@ -69,7 +69,7 @@ describe('calculateCentroids', () => {
     test('it get right group', () => {
 
         const myFeatureVectors: Vector[] = [
-            [1, 1], [1, 1.11], [1, 1.111], [1, 1.01], [1, 1.1111], 
+            [1, 1], [1, 1.11], [1, 1.111], [1, 1.01], [1, 1.1111],
             [2, 4], [2, 4.1], [2, 4.12], [2, 4.123], [2, 4.123123]
         ]
 
@@ -85,10 +85,12 @@ describe('calculateCentroids', () => {
 
         const ret = groupByCentroids(myFeatureVectors, newCentroids)
 
-        expect(ret).of
+        const wrapper = {
+            ret
+        };
 
-        expect(ret).toMatchObject(
-            [
+        expect(wrapper).toEqual({
+            ret: expect.arrayContaining([
                 [
                     [1, 1],
                     [1, 1.11],
@@ -102,9 +104,9 @@ describe('calculateCentroids', () => {
                     [2, 4.12],
                     [2, 4.123],
                     [2, 4.123123],
-                ],
-            ]
-        )
+                ]
+            ])
+        })
     })
 });
 
@@ -117,7 +119,7 @@ test('calculateCenterPoint', () => {
 
 test('beginIteration', () => {
     const myFeatureVectors: Vector[] = [
-        [1, 1], [1, 1.11], [1, 1.111], [1, 1.01], [1, 1.1111], 
+        [1, 1], [1, 1.11], [1, 1.111], [1, 1.01], [1, 1.1111],
         [2, 4], [2, 4.1], [2, 4.12], [2, 4.123], [2, 4.123123]
     ]
 

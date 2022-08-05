@@ -6,6 +6,7 @@ import { ItemRendererProps, ListObserverProps, UnsupportedBehavior, VirtualListP
 import { groupArray } from "./utils";
 import DB from './predictHeight/db'
 import useDBPredictFinished from "./hooks/useDBPredictFinished";
+import useTrackingValue from "./hooks/useTrackingValue";
 
 // @ts-ignore
 // requestIdleCallback = null
@@ -65,19 +66,18 @@ export const ListObserver = (props: ListObserverProps) => {
         ? indexList.reduce((prev, cur) => prev + heights[cur], 0)
         : indexList.length * itemMinHeight
 
-    if (Number.isNaN(minHeight))  {
-        debugger
-    }    
-
     return (
-        <div ref={ref} role="list" style={{minHeight}}>
+        <div ref={ref} role="list" style={{ minHeight }}>
             {
                 intersectionObserverEntry && intersectionObserverEntry.isIntersecting ?
                     <>
                         {
                             groupedList.map((subGroupedList, index) => {
                                 if (subGroupedList.length === 1) {
-                                    return <ItemRenderer key={index} index={subGroupedList[0]} children={props.children} />
+                                    return (
+                                        <ItemRenderer
+                                         key={index} index={subGroupedList[0]} children={props.children} />
+                                    )
                                 } else {
                                     return (
                                         <ListObserver
@@ -114,6 +114,10 @@ export const ItemRenderer = (props: ItemRendererProps) => {
             db.addToListLib(props.index, height)
         }
     }, undefined, UnsupportedBehavior.immediate)
+
+    useTrackingValue(height, () => {
+        props.onItemHeightChange?.(props.index, height)
+    })
 
     return (
         <div role="item" ref={measuredRef}>

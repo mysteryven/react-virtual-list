@@ -23,7 +23,8 @@ export interface ListObserverProps {
 
 export interface ItemRendererProps {
     children: FunctionComponent<ChildItemProps>;
-    index: number
+    index: number;
+    onItemHeightChange: (index: number, height: number) => void;
 }
 
 export enum UnsupportedBehavior {
