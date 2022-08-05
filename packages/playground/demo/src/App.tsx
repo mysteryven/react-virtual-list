@@ -10,7 +10,7 @@ const str = `
 const originalList = new Array(100).fill(0).map(i => {
   return {
     memo: str.slice(Math.floor(Math.random() * str.length)),
-    images: new Array(Math.floor(Math.random() * 30)).fill(0)
+    images: new Array(Math.floor(Math.random() * 12)).fill(0)
   }
 })
 
@@ -40,7 +40,7 @@ function ListItem(props: ChildItemProps) {
         {index}
       </h1>
       <div className="right">
-        <div style={{ fontSize: '34px', lineHeight: '1.4' }}>
+        <div style={{ fontSize: '14px', lineHeight: '1.4' }}>
           {originalList[index].memo}
         </div>
         <div>

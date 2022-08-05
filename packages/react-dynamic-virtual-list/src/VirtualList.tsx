@@ -8,7 +8,7 @@ import DB from './predictHeight/db'
 import useDBPredictFinished from "./hooks/useDBPredictFinished";
 
 // @ts-ignore
-requestIdleCallback = null
+// requestIdleCallback = null
 
 const db = new DB();
 (window as any).db = db;

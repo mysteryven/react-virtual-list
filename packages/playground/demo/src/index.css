@@ -110,8 +110,8 @@ button:focus-visible {
 }
 
 .image {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   margin-bottom: 10px;
   background-color: #ffffff;
 }

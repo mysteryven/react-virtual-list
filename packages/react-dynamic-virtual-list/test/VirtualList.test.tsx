@@ -56,6 +56,7 @@ describe('ListObserver', () => {
 
     const initialProps: ListObserverProps = {
         indexList: [0, 1, 2, 3, 4, 5, 6],
+        heights: [],
         children: ({ index }) => <div>{index}</div>,
         itemMinHeight: 60,
         dividedAreaNum: 2,
@@ -82,6 +83,7 @@ describe('ListObserver', () => {
             children: ({ index }) => <div>{index}</div>,
             itemMinHeight: 60,
             dividedAreaNum: 2,
+            heights: [],
             isObserving: true,
         }
 

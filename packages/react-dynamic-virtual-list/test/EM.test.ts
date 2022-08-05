@@ -85,7 +85,9 @@ describe('calculateCentroids', () => {
 
         const ret = groupByCentroids(myFeatureVectors, newCentroids)
 
-        expect(ret).toStrictEqual(
+        expect(ret).of
+
+        expect(ret).toMatchObject(
             [
                 [
                     [1, 1],
@@ -119,5 +121,5 @@ test('beginIteration', () => {
         [2, 4], [2, 4.1], [2, 4.12], [2, 4.123], [2, 4.123123]
     ]
 
-    expect(beginIteration(myFeatureVectors, 2).length).toEqual(2)
+    expect(beginIteration(myFeatureVectors, 2, {}).centroids.length).toEqual(2)
 })
