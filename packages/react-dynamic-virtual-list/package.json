@@ -13,7 +13,7 @@
     "build-fast": "tsup",
     "build": "pnpm run build-fast --dts-resolve",
     "build:vite": "vite build",
-    "prepublishOnly": "pnpm run build",
+    "prepublishOnly": "pnpm run build:vite",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
