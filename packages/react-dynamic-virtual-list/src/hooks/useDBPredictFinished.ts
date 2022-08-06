@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import PredictDatabase from "../predictHeight/db";
 import { Vector } from "../predictHeight/EM";
 
-type Callback = (vector: number[]) => void
+type Callback = (vector: Vector[], itemToHeightMap: Record<string, number>) => void
 
 export default function useDBPredictFinished<T extends Vector>(
     db: PredictDatabase,
@@ -15,8 +15,8 @@ export default function useDBPredictFinished<T extends Vector>(
     })
 
     useEffect(() => {
-        function listener(vector: number[]) {
-            saveCallbackRef.current?.(vector)
+        function listener(vector: Vector[], itemToHeightMap: Record<string, number>) {
+            saveCallbackRef.current?.(vector, itemToHeightMap)
         }
 
         db.addListener(listener);

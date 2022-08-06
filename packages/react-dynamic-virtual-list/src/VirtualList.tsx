@@ -8,15 +8,19 @@ import PredictDatabase from './predictHeight/db'
 import useDBPredictFinished from "./hooks/useDBPredictFinished";
 import useTrackingValue from "./hooks/useTrackingValue";
 import useList from "./hooks/useList";
+import PredictWorker from './predictHeight/worker?worker&inline'
+import useWebWorkerListener from "./hooks/useWebWorkerListener";
 
-// @ts-ignore
-// requestIdleCallback = null
+const worker = new PredictWorker()
 
-const db = new PredictDatabase();
-(window as any).db = db;
+
 
 const VirtualList = (props: VirtualListProps) => {
-    const { itemCount, dividedAreaNum, factors, itemMinHeight } = props
+    const { itemCount, dividedAreaNum, factors = [], itemMinHeight } = props
+
+    const db = useMemo(() => {
+        return new PredictDatabase(itemCount * 20);
+    }, [])
 
     const groupList = useMemo(() => {
         const arr = Array.from({ length: itemCount }, (_, index) => index)
@@ -27,24 +31,28 @@ const VirtualList = (props: VirtualListProps) => {
         Array.from({ length: itemCount }, () => ({ type: 'default', value: itemMinHeight }))
     );
 
+    useWebWorkerListener(worker, ({ data }) => {
+        if (Array.isArray(data) && data.length === heights.length) {
+            actions.set(data)
+        }
+    })
+
     useEffect(() => {
         db.initWaitToPredictList(factors || [])
-        db.restoreFromCache()
     }, [factors])
 
-    useDBPredictFinished(db, (predictHeights) => {
-        const newHeights = [...heights]
+    useEffect(() => {
+    }, [worker])
 
-        predictHeights.forEach((predictHeight, index) => {
-            if (newHeights[index].type !== 'real') {
-                newHeights[index] = {
-                    type: 'predict',
-                    value: predictHeight
-                }
-            }
+    useDBPredictFinished(db, async (allList, itemToHeightMap) => {
+
+        worker.postMessage({
+            allList,
+            itemToHeightMap,
+            itemCount,
+            factors,
+            heights,
         })
-
-        actions.set(newHeights)
     })
 
     function handleItemHeightChange(index: number, height: number) {
@@ -59,8 +67,10 @@ const VirtualList = (props: VirtualListProps) => {
             {
                 groupList.map((item, index) => (
                     <ListObserver key={index}
+                        db={db}
                         dividedAreaNum={props.dividedAreaNum}
                         indexList={item}
+                        itemMinHeight={itemMinHeight}
                         heights={heights}
                         isObserving={true}
                         children={props.children}
@@ -75,7 +85,6 @@ const VirtualList = (props: VirtualListProps) => {
 export const ListObserver = (props: ListObserverProps) => {
     const { indexList, children, dividedAreaNum, isObserving, heights } = props
     const ref = useRef<HTMLDivElement>(null)
-    const prevMinHeight = useRef<number>();
 
     const groupedList = useMemo(() => {
         return groupArray(indexList, dividedAreaNum)
@@ -85,11 +94,13 @@ export const ListObserver = (props: ListObserverProps) => {
     // @ts-ignore 
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
 
-    const minHeight = indexList.reduce((prev, cur) => prev + heights[cur].value, 0)
-
-    useEffect(() => {
-        prevMinHeight.current = minHeight
-    })
+    let minHeight = props.itemMinHeight
+    try {
+        minHeight = indexList.reduce((prev, cur) => prev + heights[cur].value, 0)
+    } catch (e) {
+        console.error(e)
+        debugger
+    }
 
     function handleItemHeightChange(index: number, height: number) {
         if (heights[index].value === height) {
@@ -98,13 +109,6 @@ export const ListObserver = (props: ListObserverProps) => {
 
         props.onItemHeightChange(index, height)
     }
-
-    // if (minHeight !== prevMinHeight.current) {
-    //     console.log('height update', `${indexList[0]}-${indexList[indexList.length - 1]}`, prevMinHeight, minHeight)
-    // } else {
-    //     console.log('height update but same', `${indexList[0]}-${indexList[indexList.length - 1]}`, prevMinHeight, minHeight, heights)
-    // }
-
 
     return (
         <div ref={ref} role="list" style={{ minHeight }}>
@@ -116,6 +120,7 @@ export const ListObserver = (props: ListObserverProps) => {
                                 if (subGroupedList.length === 1) {
                                     return (
                                         <ItemRenderer
+                                            db={props.db}
                                             onItemHeightChange={handleItemHeightChange}
                                             key={index}
                                             index={subGroupedList[0]}
@@ -125,8 +130,10 @@ export const ListObserver = (props: ListObserverProps) => {
                                 } else {
                                     return (
                                         <ListObserver
+                                            db={props.db}
                                             onItemHeightChange={props.onItemHeightChange}
                                             key={index}
+                                            itemMinHeight={props.itemMinHeight}
                                             indexList={subGroupedList}
                                             children={children}
                                             dividedAreaNum={dividedAreaNum}
@@ -155,7 +162,7 @@ export const ItemRenderer = (props: ItemRendererProps) => {
 
     useIdleCallback(() => {
         if (height > 0) {
-            db.addToListLib(props.index, height)
+            props.db.addSample(props.index, height)
         }
     }, undefined, UnsupportedBehavior.immediate)
 

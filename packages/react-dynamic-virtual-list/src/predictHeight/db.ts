@@ -1,11 +1,11 @@
-import { beginIteration, findNearestCentroidIndex, Vector } from "./EM"
+import { findNearestCentroidIndex, Vector } from "./EM"
 import { DBSchema, IDBPDatabase, openDB } from 'idb/with-async-ittr';
 
 export enum PredictDatabaseStatus {
     empty,
     collecting,
     computing,
-    finished
+    finished,
 }
 
 interface PredictHeightDB extends DBSchema {
@@ -18,17 +18,18 @@ interface PredictHeightDB extends DBSchema {
     };
 }
 
+type ListenerCallbackType = (allList: Vector[], itemToHeightMap: Record<string, number>) => void;
+
 export default class PredictDatabase {
     weight: Map<keyof Vector, number> = new Map()
     DBStatus: PredictDatabaseStatus = PredictDatabaseStatus.empty
     waitToPredictList: Vector[] = []
-    listeners: ((heights: number[]) => void)[] = []
+    listeners: ((allList: Vector[], itemToHeightMap: Record<string, number>) => void)[] = []
     db: IDBPDatabase<PredictHeightDB> | null = null
     capacity: number = 1000
-    centroidNum: number = 100;
-    constructor(capacity: number, centroidNum: number) {
+
+    constructor(capacity: number) {
         this.capacity = capacity
-        this.centroidNum = centroidNum
     }
 
     async initDB() {
@@ -53,11 +54,11 @@ export default class PredictDatabase {
         this.waitToPredictList = list
     }
 
-    addListener(callback: (heights: number[]) => void) {
+    addListener(callback: ListenerCallbackType) {
         this.listeners.push(callback)
     }
 
-    removeListener(callback: (heights: number[]) => void) {
+    removeListener(callback: ListenerCallbackType) {
         this.listeners = this.listeners.filter(item => item !== callback)
     }
 
@@ -70,20 +71,13 @@ export default class PredictDatabase {
         return true
     }
 
-    async addToListLib(index: number, height: number) {
-        if (this.DBStatus === PredictDatabaseStatus.computing) {
-            return
-        }
-
-        if (this.DBStatus === PredictDatabaseStatus.finished) {
-            return
-        }
-
-        if (this.waitToPredictList.length === 0) {
+    async addSample(index: number, height: number) {
+        if (this.waitToPredictList.length === 0 || !this.waitToPredictList[index]) {
             return
         }
 
         const item = this.waitToPredictList[index];
+
         if (!this.db) {
             await this.initDB()
         }
@@ -94,6 +88,10 @@ export default class PredictDatabase {
         })
 
         if (await this.isReadyToPredict()) {
+            if (this.DBStatus === PredictDatabaseStatus.finished) {
+                return
+            }
+
             this.DBStatus = PredictDatabaseStatus.finished
             const source = await this.db?.getAll('dynamic-height-list') || []
             let allList: Vector[] = []
@@ -103,13 +101,8 @@ export default class PredictDatabase {
                 allList.push(item.weight)
                 itemToHeightMap[item.weight.join("-")] = item.height
             })
-
-            const { centroids, centroidsHeight } = beginIteration(allList, this.centroidNum, itemToHeightMap)
-
-            const heights = this.predict(centroids, centroidsHeight)
-
             this.listeners.forEach(listener => {
-                listener(heights)
+                listener(allList, itemToHeightMap)
             })
         }
     }

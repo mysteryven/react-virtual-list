@@ -1,5 +1,4 @@
 import { defineConfig } from 'tsup'
-import path from 'path'
 
 export default defineConfig({
     entry: ['./src/index.tsx'],
