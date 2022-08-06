@@ -23,6 +23,16 @@ vi.mock('../src/hooks/useIntersection', () => {
     }
 })
 
+vi.mock('../src/predictHeight/worker?worker&inline', () => {
+    return {
+        default: class {
+            addEventListener = () => { }
+            removeEventListener = () => { }
+            postMessage = () => { }
+        }
+    }
+})
+
 
 describe('ItemRenderer', () => {
     it('should render with children', () => {
@@ -56,9 +66,8 @@ describe('ListObserver', () => {
 
     const initialProps: ListObserverProps = {
         indexList: [0, 1, 2, 3, 4, 5, 6],
-        heights: [],
+        heights: new Array(7).fill(0).map(i => ({ type: 'real', value: 60 })),
         children: ({ index }) => <div>{index}</div>,
-        itemMinHeight: 60,
         dividedAreaNum: 2,
         isObserving: false
     }
@@ -81,9 +90,8 @@ describe('ListObserver', () => {
         const props: ListObserverProps = {
             indexList: [0, 1, 2, 3],
             children: ({ index }) => <div>{index}</div>,
-            itemMinHeight: 60,
             dividedAreaNum: 2,
-            heights: [],
+            heights: new Array(7).fill(0).map(i => ({ type: 'real', value: 60 })),
             isObserving: true,
         }
 
@@ -114,7 +122,7 @@ describe('virtualList', () => {
         const props: VirtualListProps = {
             itemCount: 10,
             children: ({ index }) => <div>{index}</div>,
-            itemMinHeight: 60,
+            itemHeight: 60,
             dividedAreaNum: 100,
         }
 
@@ -129,7 +137,7 @@ describe('virtualList', () => {
         const props: VirtualListProps = {
             itemCount: 10,
             children: ({ index }) => <div>{index}</div>,
-            itemMinHeight: 60,
+            itemHeight: 60,
             dividedAreaNum: 2,
         }
 

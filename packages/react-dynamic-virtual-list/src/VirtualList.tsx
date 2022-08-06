@@ -14,7 +14,7 @@ import useWebWorkerListener from "./hooks/useWebWorkerListener";
 const worker = new PredictWorker()
 
 const VirtualList = (props: VirtualListProps) => {
-    const { itemCount, dividedAreaNum, factors = [], itemHeight: itemMinHeight } = props
+    const { itemCount, dividedAreaNum, factors = [], itemHeight: itemMinHeight, useDynamicHeight = false } = props
 
     const db = useMemo(() => {
         return new PredictDatabase(itemCount * 20);
@@ -26,7 +26,7 @@ const VirtualList = (props: VirtualListProps) => {
     }, [itemCount, dividedAreaNum])
 
     const [heights, actions] = useList<HeightItem>(
-        Array.from({ length: itemCount }, () => ({ type: 'default', value: itemMinHeight })),
+        () => Array.from({ length: itemCount }, () => ({ type: 'default', value: itemMinHeight })),
         [itemCount, itemMinHeight]
     );
 
@@ -38,12 +38,15 @@ const VirtualList = (props: VirtualListProps) => {
     })
 
     useEffect(() => {
-        if (Array.isArray(factors) && factors.length === itemCount) {
+        if (useDynamicHeight && Array.isArray(factors) && factors.length === itemCount) {
             db.initWaitToPredictList(factors)
         }
     }, [factors])
 
     useDBPredictFinished(db, async (allList, itemToHeightMap) => {
+        if (!useDynamicHeight) {
+            return
+        }
         worker.postMessage({
             allList,
             itemToHeightMap,
@@ -66,9 +69,9 @@ const VirtualList = (props: VirtualListProps) => {
                 groupList.map((item, index) => (
                     <ListObserver key={index}
                         db={db}
+                        useDynamicHeight={useDynamicHeight}
                         dividedAreaNum={props.dividedAreaNum}
                         indexList={item}
-                        itemMinHeight={itemMinHeight}
                         heights={heights}
                         isObserving={true}
                         children={props.children}
@@ -92,17 +95,14 @@ export const ListObserver = (props: ListObserverProps) => {
     // @ts-ignore 
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
 
-    let minHeight = indexList.reduce((prev, cur) => prev + heights[cur].value, 0) 
-    if (Number.isNaN(minHeight)) {
-        debugger
-    }
+    let minHeight = indexList.reduce((prev, cur) => prev + (heights[cur]?.value || 0), 0) 
 
     function handleItemHeightChange(index: number, height: number) {
-        if (heights[index].value === height) {
+        if (heights[index].value === height || !props.useDynamicHeight) {
             return
         }
 
-        props.onItemHeightChange(index, height)
+        props.onItemHeightChange?.(index, height)
     }
 
     return (
@@ -157,7 +157,7 @@ export const ItemRenderer = (props: ItemRendererProps) => {
 
     useIdleCallback(() => {
         if (height > 0) {
-            props.db.addSample(props.index, height)
+            props.db?.addSample(props.index, height)
         }
     }, undefined, UnsupportedBehavior.immediate)
 

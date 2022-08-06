@@ -5,12 +5,18 @@ interface Actions<T> {
     update: (index: number, value: T) => void
 }
 
-export default function useList<T>(initialList: T[], deps: DependencyList): [T[], Actions<T>] {
-    const listRef = useRef<T[]>(initialList)
+export default function useList<T>(initialListFn: () => T[], deps: DependencyList): [T[], Actions<T>] {
+    const listRef = useRef<T[]>(initialListFn())
+    const saveInitialListFn = useRef<() => T[]>();
     const [_, forceUpdate] = useState<number>(0)
 
     useEffect(() => {
-        listRef.current = initialList
+        saveInitialListFn.current = initialListFn
+    })
+
+    useEffect(() => {
+        listRef.current = initialListFn();
+        forceUpdate((count) => (count + 1) % 10e8)
     }, deps)
 
     const actions = useMemo(() => {

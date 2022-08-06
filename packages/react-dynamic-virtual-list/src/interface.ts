@@ -11,24 +11,25 @@ export interface VirtualListProps {
     itemCount: number;
     itemHeight: number;
     factors?: Vector[];
+    useDynamicHeight?: boolean
 }
 
 export interface ListObserverProps {
     indexList: number[];
-    db: PredictDatabase;
     children: FunctionComponent<ChildItemProps>;
     dividedAreaNum: number;
     isObserving: boolean;
     heights: HeightItem[];
-    itemMinHeight: number;
-    onItemHeightChange: (index: number, height: number) => void;
+    db?: PredictDatabase;
+    onItemHeightChange?: (index: number, height: number) => void;
+    useDynamicHeight?: boolean;
 }
 
 export interface ItemRendererProps {
     children: FunctionComponent<ChildItemProps>;
-    db: PredictDatabase;
+    db?: PredictDatabase;
     index: number;
-    onItemHeightChange: (index: number, height: number) => void;
+    onItemHeightChange?: (index: number, height: number) => void;
 }
 
 export enum UnsupportedBehavior {
