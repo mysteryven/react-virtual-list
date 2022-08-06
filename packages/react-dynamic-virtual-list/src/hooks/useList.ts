@@ -13,12 +13,12 @@ export default function useList<T>(initialList: T[]): [T[], Actions<T>] {
         return {
             set: (newList: T[]) => {
                 listRef.current = newList
-                forceUpdate((count) => ++count)
+                forceUpdate((count) => (count + 1) % 10e8)
             },
             update(index: number, value: T) {
                 listRef.current[index] = value
-                forceUpdate((count) => ++count)
-            }
+                forceUpdate((count) => (count + 1) % 10e8)
+            },
         }
     }, [])
 

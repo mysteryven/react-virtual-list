@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
-import DB from "../predictHeight/db";
+import PredictDatabase from "../predictHeight/db";
 import { Vector } from "../predictHeight/EM";
 
 type Callback = (vector: number[]) => void
 
 export default function useDBPredictFinished<T extends Vector>(
-    db: DB,
+    db: PredictDatabase,
     callback: Callback
 ) {
     const saveCallbackRef = useRef<Callback>();

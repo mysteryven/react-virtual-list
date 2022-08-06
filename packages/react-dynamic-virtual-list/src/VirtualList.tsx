@@ -4,7 +4,7 @@ import useIdleCallback from "./hooks/useIdleCallback";
 import useIntersection from "./hooks/useIntersection";
 import { HeightItem, ItemRendererProps, ListObserverProps, UnsupportedBehavior, VirtualListProps } from "./interface";
 import { groupArray } from "./utils";
-import DB from './predictHeight/db'
+import PredictDatabase from './predictHeight/db'
 import useDBPredictFinished from "./hooks/useDBPredictFinished";
 import useTrackingValue from "./hooks/useTrackingValue";
 import useList from "./hooks/useList";
@@ -12,7 +12,7 @@ import useList from "./hooks/useList";
 // @ts-ignore
 // requestIdleCallback = null
 
-const db = new DB();
+const db = new PredictDatabase();
 (window as any).db = db;
 
 const VirtualList = (props: VirtualListProps) => {
