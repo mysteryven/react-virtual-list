@@ -15,13 +15,13 @@ importers:
       '@vitejs/plugin-react': ^2.0.0
       react: ^18.2.0
       react-dom: ^18.2.0
-      react-dynamic-virtual-list: workspace:*
+      react-auto-height-virtual-list: workspace:*
       typescript: ^4.6.4
       vite: ^3.0.0
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      react-dynamic-virtual-list: link:../../react-dynamic-virtual-list
+      react-auto-height-virtual-list: link:../../react-auto-height-virtual-list
     devDependencies:
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
@@ -29,7 +29,7 @@ importers:
       typescript: 4.7.4
       vite: 3.0.0
 
-  packages/react-dynamic-virtual-list:
+  packages/react-auto-height-virtual-list:
     specifiers:
       '@koale/useworker': ^4.0.2
       '@testing-library/react': ^13.2.0

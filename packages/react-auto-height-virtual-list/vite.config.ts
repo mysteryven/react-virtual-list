@@ -8,7 +8,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: path.resolve(__dirname, 'src/index.tsx'),
-      name: 'react-dynamic-virtual-list',
+      name: 'react-auto-height-virtual-list',
       fileName: 'index',
       formats: ['es']
     },

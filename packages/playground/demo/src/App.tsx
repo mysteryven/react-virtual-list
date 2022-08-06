@@ -1,5 +1,5 @@
 import './App.css'
-import VirtualList, { ChildItemProps } from 'react-dynamic-virtual-list'
+import VirtualList, { ChildItemProps } from 'react-auto-height-virtual-list'
 
 const str = `
   Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.
@@ -24,9 +24,9 @@ function App() {
 
   return (
     <div>
-      <VirtualList dividedAreaNum={10} itemCount={arrayLength} itemHeight={40} factors={factors}>
+      <VirtualList dividedAreaNum={10} itemCount={arrayLength} itemHeight={40}>
         {
-          (props) => <ListItem index={props.index} />
+          (props: any) => <ListItem index={props.index} />
         }
       </VirtualList>
     </div>
