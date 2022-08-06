@@ -33,9 +33,10 @@ export default function useIdleCallback(
 }
 
 function isSupported() {
-    return typeof global !== 'undefined' &&
-        'requestIdleCallback' in global &&
-        'cancelIdleCallback' in global &&
+
+    return typeof globalThis !== 'undefined' &&
+        'requestIdleCallback' in globalThis &&
+        'cancelIdleCallback' in globalThis &&
         typeof requestIdleCallback === 'function' &&
         typeof cancelIdleCallback === 'function'
 }

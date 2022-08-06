@@ -9,7 +9,7 @@ export interface VirtualListProps {
     children: FunctionComponent<ChildItemProps>;
     dividedAreaNum: number;
     itemCount: number;
-    itemMinHeight: number;
+    itemHeight: number;
     factors?: Vector[];
 }
 

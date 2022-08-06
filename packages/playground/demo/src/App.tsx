@@ -24,7 +24,7 @@ function App() {
 
   return (
     <div>
-      <VirtualList dividedAreaNum={10} itemCount={arrayLength} itemMinHeight={40} factors={factors}>
+      <VirtualList dividedAreaNum={10} itemCount={arrayLength} itemHeight={40} factors={factors}>
         {
           (props) => <ListItem index={props.index} />
         }

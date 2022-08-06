@@ -15,8 +15,8 @@ const idleCallbackMocker = {
         }
 
         isMocking = true
-        originRequestIdleCallback = global.requestIdleCallback
-        originCancelIdleCallback = global.cancelIdleCallback
+        originRequestIdleCallback = globalThis.requestIdleCallback
+        originCancelIdleCallback = globalThis.cancelIdleCallback
 
         vi.stubGlobal('requestIdleCallback', vi.fn((callback: () => void) => {
             callbackMap.set(++i, callback)
@@ -33,8 +33,8 @@ const idleCallbackMocker = {
         }
 
         isMocking = true
-        originRequestIdleCallback = global.requestIdleCallback
-        originCancelIdleCallback = global.cancelIdleCallback
+        originRequestIdleCallback = globalThis.requestIdleCallback
+        originCancelIdleCallback = globalThis.cancelIdleCallback
 
         vi.stubGlobal('requestIdleCallback', null)
 
@@ -44,8 +44,8 @@ const idleCallbackMocker = {
         isMocking = false
         callbackMap.clear()
         i = 0;
-        global.requestIdleCallback = originRequestIdleCallback 
-        global.cancelIdleCallback = originCancelIdleCallback
+        globalThis.requestIdleCallback = originRequestIdleCallback 
+        globalThis.cancelIdleCallback = originCancelIdleCallback
     },
     runIdleCallbacks: () => {
         for (let [_, value] of callbackMap) {

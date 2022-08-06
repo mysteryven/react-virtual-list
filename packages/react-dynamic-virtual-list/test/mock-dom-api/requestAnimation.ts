@@ -8,8 +8,8 @@ let originCancelAnimationFrame: any = null
 
 const requestAnimationMocker = {
     mock() {
-        originRequestAnimationFrame = global.requestAnimationFrame
-        originCancelAnimationFrame = global.cancelAnimationFrame
+        originRequestAnimationFrame = globalThis.requestAnimationFrame
+        originCancelAnimationFrame = globalThis.cancelAnimationFrame
 
         vi.stubGlobal('requestAnimationFrame', vi.fn((callback: () => void) => {
             callbackMap.set(++i, callback)
@@ -23,8 +23,8 @@ const requestAnimationMocker = {
     restore() {
         callbackMap.clear()
         i = 0;
-        global.requestIdleCallback = originRequestAnimationFrame 
-        global.cancelIdleCallback = originCancelAnimationFrame
+        globalThis.requestIdleCallback = originRequestAnimationFrame 
+        globalThis.cancelIdleCallback = originCancelAnimationFrame
     },
     runIdleCallbacks: () => {
         for (let [_, value] of callbackMap) {

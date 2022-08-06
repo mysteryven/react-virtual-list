@@ -74,13 +74,13 @@ let originIntersectionObserver: any = null
 
 export const intersectionMocker = {
     mock() {
-        originIntersectionObserver = global.IntersectionObserver
+        originIntersectionObserver = globalThis.IntersectionObserver
         vi.stubGlobal('IntersectionObserver', IntersectionObserverMock)
     },
     simulate,
     getObservers: () => observers,
     restore() {
-        global.IntersectionObserver = originIntersectionObserver
+        globalThis.IntersectionObserver = originIntersectionObserver
         observers = []
     }
 }

@@ -14,7 +14,7 @@ import useWebWorkerListener from "./hooks/useWebWorkerListener";
 const worker = new PredictWorker()
 
 const VirtualList = (props: VirtualListProps) => {
-    const { itemCount, dividedAreaNum, factors = [], itemMinHeight } = props
+    const { itemCount, dividedAreaNum, factors = [], itemHeight: itemMinHeight } = props
 
     const db = useMemo(() => {
         return new PredictDatabase(itemCount * 20);
@@ -32,19 +32,18 @@ const VirtualList = (props: VirtualListProps) => {
 
     useWebWorkerListener(worker, ({ data }) => {
         if (Array.isArray(data) && data.length === heights.length) {
+            console.log("has predict")
             actions.set(data)
         }
     })
 
     useEffect(() => {
-        db.initWaitToPredictList(factors || [])
+        if (Array.isArray(factors) && factors.length === itemCount) {
+            db.initWaitToPredictList(factors)
+        }
     }, [factors])
 
-    useEffect(() => {
-    }, [worker])
-
     useDBPredictFinished(db, async (allList, itemToHeightMap) => {
-
         worker.postMessage({
             allList,
             itemToHeightMap,
@@ -93,11 +92,8 @@ export const ListObserver = (props: ListObserverProps) => {
     // @ts-ignore 
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
 
-    let minHeight = props.itemMinHeight
-    try {
-        minHeight = indexList.reduce((prev, cur) => prev + heights[cur].value, 0)
-    } catch (e) {
-        console.error(e)
+    let minHeight = indexList.reduce((prev, cur) => prev + heights[cur].value, 0) 
+    if (Number.isNaN(minHeight)) {
         debugger
     }
 

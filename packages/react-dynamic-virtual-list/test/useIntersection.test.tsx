@@ -47,7 +47,7 @@ describe("useInterseciton", () => {
             targetRef = React.createRef<HTMLDivElement>()
             render(<div ref={targetRef} />, { container })
         })
-        delete (global as any).IntersectionObserver
+        delete (globalThis as any).IntersectionObserver
 
         const { result } = renderHook(() => useIntersection(targetRef, {}, true))
         expect(result.current).toBeNull()
