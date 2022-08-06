@@ -16,9 +16,8 @@ export interface ListObserverProps {
     indexList: number[];
     children: FunctionComponent<ChildItemProps>;
     dividedAreaNum: number;
-    itemMinHeight: number
     isObserving: boolean;
-    heights: number[];
+    heights: HeightItem[];
     onItemHeightChange: (index: number, height: number) => void;
 }
 
@@ -31,4 +30,9 @@ export interface ItemRendererProps {
 export enum UnsupportedBehavior {
     immediate,
     timeout
+}
+
+export interface HeightItem {
+    type: 'default' | 'predict' | 'real';
+    value: number
 }

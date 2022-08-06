@@ -7,7 +7,7 @@ const str = `
   Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.
 `;
 
-const originalList = new Array(100).fill(0).map(i => {
+const originalList = new Array(1000).fill(0).map(i => {
   return {
     memo: str.slice(Math.floor(Math.random() * str.length)),
     images: new Array(Math.floor(Math.random() * 12)).fill(0)
@@ -22,7 +22,7 @@ function App() {
 
   return (
     <div>
-      <VirtualList dividedAreaNum={10} itemCount={100} itemMinHeight={40} factors={factors}>
+      <VirtualList dividedAreaNum={10} itemCount={1000} itemMinHeight={40} factors={factors}>
         {
           (props) => <ListItem index={props.index} />
         }
@@ -40,7 +40,7 @@ function ListItem(props: ChildItemProps) {
         {index}
       </h1>
       <div className="right">
-        <div style={{ fontSize: '14px', lineHeight: '1.4' }}>
+        <div style={{ fontSize: '32px', lineHeight: '1.4' }}>
           {originalList[index].memo}
         </div>
         <div>

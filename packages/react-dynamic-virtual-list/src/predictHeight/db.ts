@@ -46,7 +46,7 @@ export default class DB {
     }
 
     isReadyToPredict() {
-        if (this.allList.length < 1000) {
+        if (this.allList.length < 10000) {
             return false
         }
 

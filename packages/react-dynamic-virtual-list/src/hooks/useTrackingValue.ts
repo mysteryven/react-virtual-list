@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 
 export default function useTrackingValue<T>(value: T, onChange: (v: T) => void) {
-    const prevValue = useRef<T>();
-
+    const tracked = useRef(value);
+    const oldValue = tracked.current;
+  
     useEffect(() => {
-        prevValue.current = value
-    })
-
-    if (prevValue.current !== value) {
-        onChange(value)
-    }
+      if (value !== oldValue) {
+        tracked.current = value;
+        onChange(value);
+      }
+    }, [onChange, value, oldValue])
 }
