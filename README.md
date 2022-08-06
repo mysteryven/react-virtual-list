@@ -1,7 +1,7 @@
 # react-virtual-list
 
 
-> 基于 Interseciton API 实现，这是一个专门用于适应动态高度的虚拟列表。
+> 基于 Interseciton API 实现，这是一个专门用于子项动态高度的虚拟列表。
 
 **这只是一个实验性的库，只是写着玩玩的。**
 
