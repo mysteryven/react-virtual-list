@@ -1,4 +1,5 @@
 import { beginIteration, findNearestCentroidIndex, Vector } from "./EM"
+import { DBSchema, IDBPDatabase, openDB } from 'idb/with-async-ittr';
 
 export enum PredictDatabaseStatus {
     empty,
@@ -7,30 +8,45 @@ export enum PredictDatabaseStatus {
     finished
 }
 
+interface PredictHeightDB extends DBSchema {
+    'dynamic-height-list': {
+        value: {
+            weight: Vector;
+            height: number;
+        };
+        key: string;
+    };
+}
+
 export default class PredictDatabase {
     weight: Map<keyof Vector, number> = new Map()
-    // {a: number, b: string}
-    allList: Vector[] = []
-    itemToHeightMap: Record<string, number> = {}
     DBStatus: PredictDatabaseStatus = PredictDatabaseStatus.empty
     waitToPredictList: Vector[] = []
     listeners: ((heights: number[]) => void)[] = []
+    db: IDBPDatabase<PredictHeightDB> | null = null
+    capacity: number = 1000
+    centroidNum: number = 100;
+    constructor(capacity: number, centroidNum: number) {
+        this.capacity = capacity
+        this.centroidNum = centroidNum
+    }
 
-    constructor() { }
+    async initDB() {
+        this.db = await openDB<PredictHeightDB>('dynamic-virtual-list', 1, {
+            upgrade(db) {
+                db.createObjectStore('dynamic-height-list', {
+                    keyPath: 'id',
+                    autoIncrement: true,
+                });
+            },
+        });
+    }
 
     initWeight(weight: Map<keyof Vector, number>) {
         this.weight = weight
     }
 
     restoreFromCache() {
-        const cache = window.localStorage.getItem('x');
-        const cache2 = window.localStorage.getItem('y')
-        if (!cache || !cache2) {
-            return
-        }
-
-        this.allList = JSON.parse(cache)
-        this.itemToHeightMap = JSON.parse(cache2)
     }
 
     initWaitToPredictList(list: Vector[]) {
@@ -45,15 +61,16 @@ export default class PredictDatabase {
         this.listeners = this.listeners.filter(item => item !== callback)
     }
 
-    isReadyToPredict() {
-        if (this.allList.length < 10000) {
+    async isReadyToPredict() {
+        const count = await this.db?.count("dynamic-height-list")
+        if (count && count >= this.capacity) {
             return false
         }
 
         return true
     }
 
-    addToListLib(index: number, height: number) {
+    async addToListLib(index: number, height: number) {
         if (this.DBStatus === PredictDatabaseStatus.computing) {
             return
         }
@@ -67,17 +84,29 @@ export default class PredictDatabase {
         }
 
         const item = this.waitToPredictList[index];
-        this.itemToHeightMap[item.join('-')] = height
-        this.allList.push(item)
+        if (!this.db) {
+            await this.initDB()
+        }
 
-        window.localStorage.setItem('x', JSON.stringify(this.allList))
-        window.localStorage.setItem('y', JSON.stringify(this.itemToHeightMap))
+        this.db?.put('dynamic-height-list', {
+            weight: item,
+            height
+        })
 
-        if (this.isReadyToPredict()) {
+        if (await this.isReadyToPredict()) {
             this.DBStatus = PredictDatabaseStatus.finished
-            const { centroids, centroidsHeight } = beginIteration(this.allList, 200, this.itemToHeightMap)
+            const source = await this.db?.getAll('dynamic-height-list') || []
+            let allList: Vector[] = []
+            let itemToHeightMap: Record<string, number> = {} 
 
-            const heights = this.predict(centroids, centroidsHeight) 
+            source.forEach(item => {
+                allList.push(item.weight)
+                itemToHeightMap[item.weight.join("-")] = item.height
+            })
+
+            const { centroids, centroidsHeight } = beginIteration(allList, this.centroidNum, itemToHeightMap)
+
+            const heights = this.predict(centroids, centroidsHeight)
 
             this.listeners.forEach(listener => {
                 listener(heights)
@@ -93,9 +122,5 @@ export default class PredictDatabase {
         })
 
         return heights;
-    }
-
-    getList(): Vector[] {
-        return []
     }
 }
