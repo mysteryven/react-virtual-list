@@ -13,8 +13,6 @@ import useWebWorkerListener from "./hooks/useWebWorkerListener";
 
 const worker = new PredictWorker()
 
-
-
 const VirtualList = (props: VirtualListProps) => {
     const { itemCount, dividedAreaNum, factors = [], itemMinHeight } = props
 
@@ -28,7 +26,8 @@ const VirtualList = (props: VirtualListProps) => {
     }, [itemCount, dividedAreaNum])
 
     const [heights, actions] = useList<HeightItem>(
-        Array.from({ length: itemCount }, () => ({ type: 'default', value: itemMinHeight }))
+        Array.from({ length: itemCount }, () => ({ type: 'default', value: itemMinHeight })),
+        [itemCount, itemMinHeight]
     );
 
     useWebWorkerListener(worker, ({ data }) => {
