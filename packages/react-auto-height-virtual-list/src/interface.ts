@@ -7,9 +7,9 @@ export interface ChildItemProps {
 }
 export interface VirtualListProps {
     children: FunctionComponent<ChildItemProps>;
-    dividedAreaNum: number;
     itemCount: number;
     itemHeight: number;
+    dividedAreaNum?: number;
     factors?: Vector[];
     useDynamicHeight?: boolean
 }

@@ -13,8 +13,11 @@ import useWebWorkerListener from "./hooks/useWebWorkerListener";
 
 const worker = new PredictWorker()
 
+// TODO 满了去删除
+// 两次 factors length 不一样去更新
+
 const VirtualList = (props: VirtualListProps) => {
-    const { itemCount, dividedAreaNum, factors = [], itemHeight: itemMinHeight, useDynamicHeight = false } = props
+    const { itemCount, dividedAreaNum = 10, factors = [], itemHeight: itemMinHeight, useDynamicHeight = false } = props
 
     const db = useMemo(() => {
         return new PredictDatabase(itemCount * 20);
