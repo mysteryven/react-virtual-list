@@ -11,7 +11,8 @@ export interface VirtualListProps {
     itemHeight: number;
     dividedAreaNum?: number;
     factors?: Vector[];
-    useDynamicHeight?: boolean
+    useDynamicHeight?: boolean;
+    version?: number
 }
 
 export interface ListObserverProps {

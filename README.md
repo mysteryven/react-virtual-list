@@ -26,6 +26,7 @@ pnpm i react-auto-height-virtual-list
 | dividedAreaNum | 不是必填，默认是 10，数据被划分为多少个区块 | `number` |
 | useDynamicHeight | 不是必填，默认 false，是否使用动态计算高度 | `boolean` |
 | factors | 不是必填，用于描述数据的特征向量 | `number[]` |
+| version | 不是必填，version 变化，会清空原有的数据，假如 factors 的含义变了，可以改这个 | `number` |
 
 ### 特别说明 
 

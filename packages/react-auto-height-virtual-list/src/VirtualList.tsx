@@ -15,9 +15,17 @@ const worker = new PredictWorker()
 
 // TODO 满了去删除
 // 两次 factors length 不一样去更新
+const VIRTUAL_LIST_VERSION_KEY = 'react-dynamic-list-version-cache-key'
 
 const VirtualList = (props: VirtualListProps) => {
-    const { itemCount, dividedAreaNum = 10, factors = [], itemHeight: itemMinHeight, useDynamicHeight = false } = props
+    const {
+        itemCount,
+        dividedAreaNum = 10,
+        factors = [],
+        itemHeight: itemMinHeight,
+        useDynamicHeight = false,
+        version = 0
+    } = props
 
     const db = useMemo(() => {
         return new PredictDatabase(itemCount * 20);
@@ -32,6 +40,18 @@ const VirtualList = (props: VirtualListProps) => {
         () => Array.from({ length: itemCount }, () => ({ type: 'default', value: itemMinHeight })),
         [itemCount, itemMinHeight]
     );
+
+    useEffect(() => {
+        let previousVersion = 0
+        try {
+            previousVersion = JSON.parse(localStorage.getItem(VIRTUAL_LIST_VERSION_KEY) || '0')
+            if (previousVersion !== version) {
+                db.clearAllData()
+            }
+        } catch(e) {
+            console.error(e)
+        } 
+    }, [version])
 
     useWebWorkerListener(worker, ({ data }) => {
         if (Array.isArray(data) && data.length === heights.length) {
@@ -98,7 +118,7 @@ export const ListObserver = (props: ListObserverProps) => {
     // @ts-ignore 
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
 
-    let minHeight = indexList.reduce((prev, cur) => prev + (heights[cur]?.value || 0), 0) 
+    let minHeight = indexList.reduce((prev, cur) => prev + (heights[cur]?.value || 0), 0)
 
     function handleItemHeightChange(index: number, height: number) {
         if (heights[index].value === height || !props.useDynamicHeight) {

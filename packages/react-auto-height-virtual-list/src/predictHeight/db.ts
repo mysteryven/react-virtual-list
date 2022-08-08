@@ -54,6 +54,10 @@ export default class PredictDatabase {
         this.waitToPredictList = list
     }
 
+    clearAllData() {
+        this.db?.clear('dynamic-height-list')
+    }
+
     addListener(callback: ListenerCallbackType) {
         this.listeners.push(callback)
     }
