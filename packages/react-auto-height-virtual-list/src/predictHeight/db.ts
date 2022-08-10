@@ -29,7 +29,7 @@ export default class PredictDatabase {
     capacity: number = 1000
 
     constructor(capacity: number) {
-        this.capacity = capacity
+        this.capacity = capacity || 1000
     }
 
     async initDB() {
@@ -50,8 +50,18 @@ export default class PredictDatabase {
     restoreFromCache() {
     }
 
-    initWaitToPredictList(list: Vector[]) {
+    async initWaitToPredictList(list: Vector[]) {
         this.waitToPredictList = list
+        const count = await this.db?.count("dynamic-height-list")
+
+        if (count && count >= this.capacity) {
+            const waitToDeleteCount = Math.floor(count);
+            let cursor = await this.db?.transaction("dynamic-height-list", "readwrite").store.openCursor()
+            for (let i = 0; i < waitToDeleteCount; i++) {
+                await cursor?.delete()
+                cursor = await cursor?.continue()
+            }
+        }
     }
 
     clearAllData() {
@@ -68,10 +78,10 @@ export default class PredictDatabase {
 
     async isReadyToPredict() {
         const count = await this.db?.count("dynamic-height-list")
-        if (count && count >= this.capacity) {
+        if (!count || count && count <= this.capacity) {
             return false
         }
-
+       
         return true
     }
 
@@ -99,7 +109,7 @@ export default class PredictDatabase {
             this.DBStatus = PredictDatabaseStatus.finished
             const source = await this.db?.getAll('dynamic-height-list') || []
             let allList: Vector[] = []
-            let itemToHeightMap: Record<string, number> = {} 
+            let itemToHeightMap: Record<string, number> = {}
 
             source.forEach(item => {
                 allList.push(item.weight)

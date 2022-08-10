@@ -13,8 +13,6 @@ import useWebWorkerListener from "./hooks/useWebWorkerListener";
 
 const worker = new PredictWorker()
 
-// TODO 满了去删除
-// 两次 factors length 不一样去更新
 const VIRTUAL_LIST_VERSION_KEY = 'react-dynamic-list-version-cache-key'
 
 const VirtualList = (props: VirtualListProps) => {
@@ -93,7 +91,7 @@ const VirtualList = (props: VirtualListProps) => {
                     <ListObserver key={index}
                         db={db}
                         useDynamicHeight={useDynamicHeight}
-                        dividedAreaNum={props.dividedAreaNum}
+                        dividedAreaNum={dividedAreaNum}
                         indexList={item}
                         heights={heights}
                         isObserving={true}
@@ -151,9 +149,9 @@ export const ListObserver = (props: ListObserverProps) => {
                                             db={props.db}
                                             onItemHeightChange={props.onItemHeightChange}
                                             key={index}
-                                            itemMinHeight={props.itemMinHeight}
                                             indexList={subGroupedList}
                                             children={children}
+                                            useDynamicHeight={props.useDynamicHeight}
                                             dividedAreaNum={dividedAreaNum}
                                             heights={heights}
                                             isObserving={intersectionObserverEntry.isIntersecting}
