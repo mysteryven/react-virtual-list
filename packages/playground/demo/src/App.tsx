@@ -7,7 +7,7 @@ const str = `
   Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est.
 `;
 
-const arrayLength = 1000
+const arrayLength = 100
 
 const originalList = new Array(arrayLength).fill(0).map(i => {
   return {
@@ -24,7 +24,7 @@ function App() {
 
   return (
     <div>
-      <VirtualList dividedAreaNum={10} itemCount={arrayLength} itemHeight={40}>
+      <VirtualList dividedAreaNum={10} itemCount={arrayLength} itemHeight={40} useDynamicHeight factors={factors}>
         {
           (props: any) => <ListItem index={props.index} />
         }
