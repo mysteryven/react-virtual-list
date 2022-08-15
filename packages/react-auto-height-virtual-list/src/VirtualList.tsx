@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMemo } from "react"
+import useWorker from 'use-worker-like-request'
 import useIdleCallback from "./hooks/useIdleCallback";
 import useIntersection from "./hooks/useIntersection";
 import { HeightItem, ItemRendererProps, ListObserverProps, UnsupportedBehavior, VirtualListProps } from "./interface";
@@ -8,12 +9,15 @@ import PredictDatabase from './predictHeight/db'
 import useDBPredictFinished from "./hooks/useDBPredictFinished";
 import useTrackingValue from "./hooks/useTrackingValue";
 import useList from "./hooks/useList";
-import PredictWorker from './predictHeight/worker?worker&inline'
-import useWebWorkerListener from "./hooks/useWebWorkerListener";
-
-const worker = new PredictWorker()
+import { beginPredict } from "./predictHeight/worker";
 
 const VIRTUAL_LIST_VERSION_KEY = 'react-dynamic-list-version-cache-key'
+
+const createWorker = () => {
+    return new Worker(new URL('./predictHeight/worker.ts', import.meta.url), {
+        type: 'module'
+    })
+}
 
 const VirtualList = (props: VirtualListProps) => {
     const {
@@ -46,17 +50,12 @@ const VirtualList = (props: VirtualListProps) => {
             if (previousVersion !== version) {
                 db.clearAllData()
             }
-        } catch(e) {
+        } catch (e) {
             console.error(e)
-        } 
+        }
     }, [version])
 
-    useWebWorkerListener(worker, ({ data }) => {
-        if (Array.isArray(data) && data.length === heights.length) {
-            console.log("has predict")
-            actions.set(data)
-        }
-    })
+    const { workerRunner } = useWorker<typeof beginPredict>(createWorker, { autoTerminate: true })
 
     useEffect(() => {
         if (useDynamicHeight && Array.isArray(factors) && factors.length === itemCount) {
@@ -68,13 +67,12 @@ const VirtualList = (props: VirtualListProps) => {
         if (!useDynamicHeight) {
             return
         }
-        worker.postMessage({
-            allList,
-            itemToHeightMap,
-            itemCount,
-            factors,
-            heights,
-        })
+        const predictHeights = await workerRunner(allList, itemToHeightMap, itemCount, factors, heights)
+        if (Array.isArray(predictHeights) && predictHeights.length === heights.length) {
+            console.log("has predict")
+            actions.set(predictHeights)
+        }
+
     })
 
     function handleItemHeightChange(index: number, height: number) {
