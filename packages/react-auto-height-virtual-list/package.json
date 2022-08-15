@@ -9,11 +9,9 @@
     "import": "./dist/index.mjs"
   },
   "scripts": {
-    "start": "tsup --watch",
-    "build-fast": "tsup",
-    "build": "pnpm run build-fast --dts-resolve",
-    "build:vite": "vite build",
-    "prepublishOnly": "pnpm run build:vite",
+    "start": "vite build --watch",
+    "build": "vite build",
+    "prepublishOnly": "pnpm run build",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
