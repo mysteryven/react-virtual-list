@@ -1,12 +1,12 @@
 {
   "name": "react-auto-height-virtual-list",
   "version": "0.0.1",
+  "type": "module",
   "description": "",
   "main": "dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "exports": {
-    "require": "./dist/index.js",
-    "import": "./dist/index.mjs"
+    "import": "./dist/index.js"
   },
   "scripts": {
     "start": "vite build --watch",
@@ -22,7 +22,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "idb": "^7.0.2",
-    "@koale/useworker": "^4.0.2"
+    "@koale/useworker": "^4.0.2",
+    "use-worker-like-request": "^0.0.6"
   },
   "devDependencies": {
     "@testing-library/react": "^13.2.0",

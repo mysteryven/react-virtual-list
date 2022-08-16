@@ -9,7 +9,11 @@ import useDBPredictFinished from "./hooks/useDBPredictFinished";
 import useTrackingValue from "./hooks/useTrackingValue";
 import useList from "./hooks/useList";
 import PredictWorker from './predictHeight/worker?worker&inline'
+import FabWorker from './predictHeight/fab?worker&inline'
+import useWorker from 'use-worker-like-request'
 import useWebWorkerListener from "./hooks/useWebWorkerListener";
+
+const createWorker = () => new FabWorker()
 
 const worker = new PredictWorker()
 
@@ -27,6 +31,14 @@ const VirtualList = (props: VirtualListProps) => {
 
     const db = useMemo(() => {
         return new PredictDatabase(itemCount * 20);
+    }, [])
+
+    const {workerRunner}  = useWorker(createWorker)
+
+    useEffect(() => {
+        setTimeout(() => {
+            workerRunner(10)
+        }, 4000)
     }, [])
 
     const groupList = useMemo(() => {

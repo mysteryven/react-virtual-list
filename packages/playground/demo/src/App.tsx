@@ -1,3 +1,4 @@
+import React from 'react'
 import './App.css'
 import VirtualList, { ChildItemProps } from 'react-auto-height-virtual-list'
 
