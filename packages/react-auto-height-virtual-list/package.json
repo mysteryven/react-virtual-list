@@ -23,8 +23,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "idb": "^7.0.2",
-    "@koale/useworker": "^4.0.2",
-    "use-worker-like-request": "^0.1.0"
+    "use-worker-like-request": "^0.1.2"
   },
   "devDependencies": {
     "vite-plugin-dts": "^1.4.1",

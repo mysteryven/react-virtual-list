@@ -27,7 +27,7 @@ export function beginIteration(
 ) {
     let centroids = extractPartVectors(featureVectors, centroidNum);
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 40; i++) {
         centroids = calculateCentroids(featureVectors, centroids)
     }
 

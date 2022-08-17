@@ -25,10 +25,10 @@ const VirtualList = (props: VirtualListProps) => {
     } = props
 
     const db = useMemo(() => {
-        return new PredictDatabase(itemCount * 20);
+        return new PredictDatabase(itemCount * 40);
     }, [])
 
-    const { workerRunner } = useWorker(createWorker)
+    const { workerRunner } = useWorker(createWorker, {autoTerminate: true})
 
     const groupList = useMemo(() => {
         const arr = Array.from({ length: itemCount }, (_, index) => index)
@@ -63,14 +63,14 @@ const VirtualList = (props: VirtualListProps) => {
             return
         }
 
-        debugger
+        console.log('predicting...')
+        const t0 = performance.now();
         const data = await workerRunner(allList, itemToHeightMap, itemCount, factors, heights)
-        console.log(data)
+        const t1 = performance.now();
+        console.log(`has predicted, cost ${((t1-t0)/1000/60).toFixed(2)} min`)
 
         if (Array.isArray(data) && data.length === heights.length) {
-            console.log("has predict")
             actions.set(data as any)
-            
         }
     })
 
