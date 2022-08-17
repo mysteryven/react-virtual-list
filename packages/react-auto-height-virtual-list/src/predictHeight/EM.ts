@@ -21,7 +21,7 @@
 export type Vector = number[];
 
 export function beginIteration(
-    featureVectors: Vector[],
+    featureVectors: Vector[] = [],
     centroidNum: number,
     heightRecord: Record<string, number>
 ) {
@@ -129,7 +129,7 @@ function getSqrtOfVector(vector: Vector) {
     return ret
 }
 
-export function extractPartVectors(featureVectors: Vector[], size: number) {
+export function extractPartVectors(featureVectors: Vector[] = [], size: number) {
     size = Math.max(1, Math.min(featureVectors.length, size))
 
     const uniqueIndices = new Set<number>()

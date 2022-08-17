@@ -10,7 +10,6 @@ import useTrackingValue from "./hooks/useTrackingValue";
 import useList from "./hooks/useList";
 import PredictWorker from './predictHeight/worker?worker&inline'
 import useWorker from 'use-worker-like-request'
-import useWebWorkerListener from "./hooks/useWebWorkerListener";
 
 const createWorker = () => new PredictWorker()
 const VIRTUAL_LIST_VERSION_KEY = 'react-dynamic-list-version-cache-key'
@@ -64,6 +63,7 @@ const VirtualList = (props: VirtualListProps) => {
             return
         }
 
+        debugger
         const data = await workerRunner(allList, itemToHeightMap, itemCount, factors, heights)
         console.log(data)
 
