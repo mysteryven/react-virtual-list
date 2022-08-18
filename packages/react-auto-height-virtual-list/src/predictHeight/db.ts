@@ -55,7 +55,7 @@ export default class PredictDatabase {
         const count = await this.db?.count("dynamic-height-list")
 
         if (count && count >= this.capacity) {
-            const waitToDeleteCount = Math.floor(count);
+            const waitToDeleteCount = Math.floor(count / 10);
             let cursor = await this.db?.transaction("dynamic-height-list", "readwrite").store.openCursor()
             for (let i = 0; i < waitToDeleteCount; i++) {
                 await cursor?.delete()

@@ -1,14 +1,8 @@
-import {exportWorker} from 'use-worker-like-request'
+import { exportWorker } from "use-worker-like-request"
 import { HeightItem } from "../interface"
 import { beginIteration, findNearestCentroidIndex, Vector } from "./EM"
 
-exportWorker((data) => beginPredict(
-    data.allList,
-    data.itemToHeightMap,
-    data.itemCount,
-    data.factors,
-    data.heights
-))
+exportWorker(beginPredict)
 
 export function beginPredict(
     allList: Vector[],

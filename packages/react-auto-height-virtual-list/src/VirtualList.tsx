@@ -10,14 +10,10 @@ import useDBPredictFinished from "./hooks/useDBPredictFinished";
 import useTrackingValue from "./hooks/useTrackingValue";
 import useList from "./hooks/useList";
 import { beginPredict } from "./predictHeight/worker";
+import PredictWorker from './predictHeight/worker?worker&inline'
 
+const createWorker = () => new PredictWorker()
 const VIRTUAL_LIST_VERSION_KEY = 'react-dynamic-list-version-cache-key'
-
-const createWorker = () => {
-    return new Worker(new URL('./predictHeight/worker.ts', import.meta.url), {
-        type: 'module'
-    })
-}
 
 const VirtualList = (props: VirtualListProps) => {
     const {
@@ -30,7 +26,7 @@ const VirtualList = (props: VirtualListProps) => {
     } = props
 
     const db = useMemo(() => {
-        return new PredictDatabase(itemCount * 20);
+        return new PredictDatabase(itemCount * 40);
     }, [])
 
     const groupList = useMemo(() => {
@@ -67,12 +63,16 @@ const VirtualList = (props: VirtualListProps) => {
         if (!useDynamicHeight) {
             return
         }
-        const predictHeights = await workerRunner(allList, itemToHeightMap, itemCount, factors, heights)
-        if (Array.isArray(predictHeights) && predictHeights.length === heights.length) {
-            console.log("has predict")
-            actions.set(predictHeights)
-        }
 
+        console.log('predicting...')
+        const t0 = performance.now();
+        const data = await workerRunner(allList, itemToHeightMap, itemCount, factors, heights)
+        const t1 = performance.now();
+        console.log(`has predicted, cost ${((t1-t0)/1000/60).toFixed(2)} min`)
+
+        if (Array.isArray(data) && data.length === heights.length) {
+            actions.set(data as any)
+        }
     })
 
     function handleItemHeightChange(index: number, height: number) {

@@ -21,13 +21,13 @@
 export type Vector = number[];
 
 export function beginIteration(
-    featureVectors: Vector[],
+    featureVectors: Vector[] = [],
     centroidNum: number,
     heightRecord: Record<string, number>
 ) {
     let centroids = extractPartVectors(featureVectors, centroidNum);
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 40; i++) {
         centroids = calculateCentroids(featureVectors, centroids)
     }
 
@@ -129,7 +129,7 @@ function getSqrtOfVector(vector: Vector) {
     return ret
 }
 
-export function extractPartVectors(featureVectors: Vector[], size: number) {
+export function extractPartVectors(featureVectors: Vector[] = [], size: number) {
     size = Math.max(1, Math.min(featureVectors.length, size))
 
     const uniqueIndices = new Set<number>()
