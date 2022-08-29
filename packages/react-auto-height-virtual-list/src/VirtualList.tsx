@@ -41,6 +41,9 @@ const VirtualList = (props: VirtualListProps) => {
 
     useEffect(() => {
         let previousVersion = 0
+        if (!useDynamicHeight) {
+            return
+        }
         try {
             previousVersion = JSON.parse(localStorage.getItem(VIRTUAL_LIST_VERSION_KEY) || '0')
             if (previousVersion !== version) {
@@ -49,7 +52,7 @@ const VirtualList = (props: VirtualListProps) => {
         } catch (e) {
             console.error(e)
         }
-    }, [version])
+    }, [version, useDynamicHeight])
 
     const { workerRunner } = useWorker<typeof beginPredict>(createWorker, { autoTerminate: true })
 

@@ -5,17 +5,17 @@
 [![npm version](https://badgen.net/npm/v/react-auto-height-virtual-list)](https://npm.im/react-auto-height-virtual-list) 
 [![npm downloads](https://badgen.net/npm/dm/react-auto-height-virtual-list)](https://npm.im/react-auto-height-virtual-list)
 
-> 基于 Interseciton API 实现，这是一个专门用于子项动态高度的虚拟列表。
+> A React Virtual List for dynamic item height based Intersection API
 
-**这只是一个实验性的库，只是写着玩玩的。**
+** Just for fun **
 
-## 安装
+## Install
 
 ```bash
 pnpm i react-auto-height-virtual-list
 ```
 
-## 原理解释
+## 
 
 简单的来说，当开启了动态计算高度（useDynamicHeight），会不断收集样本，并存储在本地数据库中待用，当样本数量到达可以预测高度的量级的时候，取出所有数据，对所有的样本进行分析，得到聚类点，然后再把当前的数据去归类到聚类点里，看看离哪一个点最近，就预测成它的高度。
 
@@ -34,9 +34,9 @@ pnpm i react-auto-height-virtual-list
 
 1. `dividedAreaNum`
 
-假设我们有一万条数据，每一个都使用 Intersection API 是否监听在视口是不显示的，所有我采用了把所有数据分组的方法。
+假设我们有一万条数据，每一个都使用 Intersection API 监听是否出现在视口，页面会很卡，所以我采用了把所有数据分组的方法。举一个具体的例子：
 
-假设有 8 条数据，视口只能看两条，我们设置了 dividedAreaNum 为 2。这样子的话，首先所有的数据会被分成两大区块：0-3，4-7。如果只有第0、1 在视口，那 4-7 就只会渲染一个空有 4 份高度的 div。同理，在 0 - 3 中，1-2 不在视口，也只是渲染空有高度的 div。这样下来，就算 10000 笔数据， Intersection 的监听也能控制在 30 个左右。
+假设有 8 条数据，视口只能看两条，我们设置了 dividedAreaNum 为 2。这样子的话，首先所有的数据会被根据 dividedAreaNum 分成两大区块：0-3，4-7。如果只有第0、1 在视口，那 4-7 就只会渲染一个空有 4 份高度的 div。同理，在 0 - 3 中，1-2 不在视口，也只是渲染空有高度的 div。这样下来，就算 10000 笔数据， Intersection 的监听也能控制在 30 个左右。
 
 2. `factors`
 
