@@ -1,4 +1,4 @@
 packages:
   # all packages in direct subdirs of packages/
-  - 'packages/react-flow-list'
+  - 'packages/react-predict-virtual'
   - 'packages/playground/*'

@@ -2,8 +2,8 @@
 
 [online demo](https://stackblitz.com/edit/vitejs-vite-gqqgju?file=src/App.tsx) 
 
-[![npm version](https://badgen.net/npm/v/react-flow-list)](https://npm.im/react-flow-list) 
-[![npm downloads](https://badgen.net/npm/dm/react-flow-list)](https://npm.im/react-flow-list)
+[![npm version](https://badgen.net/npm/v/react-predict-virtual)](https://npm.im/react-predict-virtual) 
+[![npm downloads](https://badgen.net/npm/dm/react-predict-virtual)](https://npm.im/react-predict-virtual)
 
 > A React Virtual List for dynamic item height based Intersection API
 
@@ -12,7 +12,7 @@
 ## Install
 
 ```bash
-pnpm i react-flow-list
+pnpm i react-predict-virtual
 ```
 
 ## 
@@ -70,7 +70,7 @@ pnpm i react-flow-list
 ### 动态高度
 
 ```ts
-import VirtualList, { ChildItemProps } from 'react-flow-list'
+import VirtualList, { ChildItemProps } from 'react-predict-virtual'
 
 const arrayLength = 1000
 

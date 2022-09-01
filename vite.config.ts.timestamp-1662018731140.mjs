@@ -19,7 +19,7 @@ var vite_config_default = defineConfig(({ mode }) => {
     build: {
       lib: {
         entry: path.resolve(__vite_injected_original_dirname, "src/index.tsx"),
-        name: "react-flow-list",
+        name: "react-predict-virtual",
         fileName: "index",
         formats: ["es"]
       },

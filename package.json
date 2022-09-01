@@ -1,11 +1,9 @@
 {
-  "name": "react-flow-list",
+  "name": "react-predict-virtual",
   "version": "0.0.1",
   "type": "module",
   "packageManager": "pnpm@7.9.5",
   "description": "A virtual list for auto height list-item in React",
-  "main": "dist/index.js",
-  "module": "./dist/index.js",
   "sideEffects": false, 
   "homepage": "https://github.com/mysteryven/react-virtual-list",
   "repository": {
