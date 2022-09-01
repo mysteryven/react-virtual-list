@@ -1,3 +1,3 @@
 import PredictWorker from './predictHeight/worker?worker&inline'
 
-export default () => PredictWorker
+export default () => new PredictWorker()

@@ -15,7 +15,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.esm.js"
+    },
+    "./createPredictWorker": {
+      "types:": "./dist/createPredictWorker.d.ts",
+      "import": "./dist/createPredictWorker.esm.js"
     }
   },
   "scripts": {

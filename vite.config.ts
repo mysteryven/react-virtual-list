@@ -16,20 +16,18 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
-      dts({
-        exclude: ['./src/predictWorker.ts'],
-      }),
+      dts(),
       react()
     ],
     build: {
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/index.tsx'),
-          worker: resolve(__dirname, 'src/predictWorker.ts')
+          worker: resolve(__dirname, 'src/createPredictWorker.ts')
         },
         output: [
           {
-            entryFileNames: ({ facadeModuleId }) => facadeModuleId.includes('index') ? 'index.esm.js' : 'predictWorker.esm.js',
+            entryFileNames: ({ facadeModuleId }) => facadeModuleId.includes('index') ? 'index.esm.js' : 'createPredictWorker.esm.js',
             format: 'esm',
             name: pkg.name,
             dir: resolve(__dirname, 'dist')

@@ -56,13 +56,16 @@ const VirtualList = (props: VirtualListProps) => {
     const { workerRunner } = useWorker<typeof beginPredict>(createWorker, { autoTerminate: true })
 
     useEffect(() => {
-        if (useDynamicHeight && Array.isArray(factors) && factors.length === itemCount) {
+        if (useDynamicHeight && createWorker && Array.isArray(factors) && factors.length === itemCount) {
             db.initWaitToPredictList(factors)
         }
     }, [factors])
 
     useDBPredictFinished(db, async (allList, itemToHeightMap) => {
         if (!useDynamicHeight) {
+            return
+        }
+        if(!createWorker) {
             return
         }
 
@@ -112,8 +115,7 @@ export const ListObserver = (props: ListObserverProps) => {
         return groupArray(indexList, dividedAreaNum)
     }, [indexList, dividedAreaNum])
 
-    // The fourth param is only used to tell unit test current observing area.
-    // @ts-ignore 
+    // @ts-ignore The fourth param is only used to tell unit test current observing area.
     const intersectionObserverEntry = useIntersection(ref, { threshold: 0 }, isObserving, `${indexList[0]}-${indexList[indexList.length - 1]}`)
 
     let minHeight = indexList.reduce((prev, cur) => prev + (heights[cur]?.value || 0), 0)
