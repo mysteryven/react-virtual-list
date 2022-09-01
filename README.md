@@ -2,8 +2,8 @@
 
 [online demo](https://stackblitz.com/edit/vitejs-vite-gqqgju?file=src/App.tsx) 
 
-[![npm version](https://badgen.net/npm/v/react-auto-height-virtual-list)](https://npm.im/react-auto-height-virtual-list) 
-[![npm downloads](https://badgen.net/npm/dm/react-auto-height-virtual-list)](https://npm.im/react-auto-height-virtual-list)
+[![npm version](https://badgen.net/npm/v/react-flow-list)](https://npm.im/react-flow-list) 
+[![npm downloads](https://badgen.net/npm/dm/react-flow-list)](https://npm.im/react-flow-list)
 
 > A React Virtual List for dynamic item height based Intersection API
 
@@ -12,7 +12,7 @@
 ## Install
 
 ```bash
-pnpm i react-auto-height-virtual-list
+pnpm i react-flow-list
 ```
 
 ## 
@@ -70,7 +70,7 @@ pnpm i react-auto-height-virtual-list
 ### 动态高度
 
 ```ts
-import VirtualList, { ChildItemProps } from 'react-auto-height-virtual-list'
+import VirtualList, { ChildItemProps } from 'react-flow-list'
 
 const arrayLength = 1000
 

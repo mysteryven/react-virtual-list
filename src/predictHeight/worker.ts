@@ -1,4 +1,4 @@
-import { exportWorker } from "use-worker-like-request"
+import { exportWorker } from "use-worker-async"
 import { HeightItem } from "../interface"
 import { beginIteration, findNearestCentroidIndex, Vector } from "./EM"
 

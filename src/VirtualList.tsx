@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useMemo } from "react"
-import useWorker from 'use-worker-like-request'
+import useWorker from 'use-worker-async'
 import useIdleCallback from "./hooks/useIdleCallback";
 import useIntersection from "./hooks/useIntersection";
 import { HeightItem, ItemRendererProps, ListObserverProps, UnsupportedBehavior, VirtualListProps } from "./interface";
@@ -10,9 +10,7 @@ import useDBPredictFinished from "./hooks/useDBPredictFinished";
 import useTrackingValue from "./hooks/useTrackingValue";
 import useList from "./hooks/useList";
 import { beginPredict } from "./predictHeight/worker";
-import PredictWorker from './predictHeight/worker?worker&inline'
-
-const createWorker = () => new PredictWorker()
+// @ts-ignore
 const VIRTUAL_LIST_VERSION_KEY = 'react-dynamic-list-version-cache-key'
 
 const VirtualList = (props: VirtualListProps) => {
@@ -22,7 +20,8 @@ const VirtualList = (props: VirtualListProps) => {
         factors = [],
         itemHeight: itemMinHeight,
         useDynamicHeight = false,
-        version = 0
+        version = 0,
+        createWorker 
     } = props
 
     const db = useMemo(() => {

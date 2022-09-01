@@ -1,13 +1,56 @@
 {
-  "name": "menorepo",
-  "private": true,
+  "name": "react-flow-list",
+  "version": "0.0.1",
+  "type": "module",
+  "packageManager": "pnpm@7.9.5",
+  "description": "A virtual list for auto height list-item in React",
+  "main": "dist/index.js",
+  "module": "./dist/index.js",
+  "sideEffects": false, 
+  "homepage": "https://github.com/mysteryven/react-virtual-list",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mysteryven/react-virtual-list.git"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "vite build --watch",
+    "example": "vite example --mode example",
+    "build": "vite build",
+    "prepublishOnly": "pnpm run build",
+    "test": "vitest",
+    "coverage": "vitest run --coverage"
   },
+  "files": [ "dist" ],
+  "keywords": ["React", "React DOM", "Virtual list", "Intersection Observable API", "Typescript"],
+  "author": "mysteryven<mysteryven@gmail.com>",
+  "license": "MIT",
   "dependencies": {
-    "throttle-debounce": "^5.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "idb": "^7.0.2",
+    "use-worker-async": "^0.1.1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "devDependencies": {
+    "vite-plugin-dts": "^1.4.1",
+    "@testing-library/react": "^13.2.0",
+    "@testing-library/react-hooks": "^8.0.0",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.26.0",
+    "@typescript-eslint/parser": "^5.26.0",
+    "@vitejs/plugin-react": "^2.0.0",
+    "eslint": ">=5.16.0",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "jsdom": "^20.0.0",
+    "typescript": "^4.7.4",
+    "vite": "^3.0.0",
+    "vitest": "^0.18.1"
+  }
 }
