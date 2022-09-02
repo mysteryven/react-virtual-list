@@ -1,7 +1,5 @@
 # React-Virtual-List
 
-online demo 等待补充.
-
 [![npm version](https://badgen.net/npm/v/react-predict-virtual)](https://npm.im/react-predict-virtual) 
 [![npm downloads](https://badgen.net/npm/dm/react-predict-virtual)](https://npm.im/react-predict-virtual)
 
@@ -30,6 +28,7 @@ pnpm build
 
 1. 划分区块的方式来使用 Intersection
 
+等待补充。
 
 2. 收集数据源的特征值，根据已经存储的数据源预测数据
 
