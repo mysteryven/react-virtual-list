@@ -1,8 +1,6 @@
-import { exportWorker } from "use-worker-async"
 import { HeightItem } from "../interface"
 import { beginIteration, findNearestCentroidIndex, Vector } from "./EM"
 
-exportWorker(beginPredict)
 
 export function beginPredict(
     allList: Vector[],

@@ -1,3 +1,4 @@
+// @ts-ignore
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useMemo } from "react"
 import useWorker from 'use-worker-async'
@@ -25,7 +26,7 @@ const VirtualList = (props: VirtualListProps) => {
     } = props
 
     const db = useMemo(() => {
-        return new PredictDatabase(itemCount * 40);
+        return new PredictDatabase(itemCount * 10);
     }, [])
 
     const groupList = useMemo(() => {

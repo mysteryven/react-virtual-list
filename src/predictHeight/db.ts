@@ -52,16 +52,19 @@ export default class PredictDatabase {
 
     async initWaitToPredictList(list: Vector[]) {
         this.waitToPredictList = list
-        const count = await this.db?.count("dynamic-height-list")
-
-        if (count && count >= this.capacity) {
-            const waitToDeleteCount = Math.floor(count / 10);
-            let cursor = await this.db?.transaction("dynamic-height-list", "readwrite").store.openCursor()
-            for (let i = 0; i < waitToDeleteCount; i++) {
-                await cursor?.delete()
-                cursor = await cursor?.continue()
-            }
+        if (!this.db) {
+            await this.initDB()
         }
+        // const count = await this.db?.count("dynamic-height-list")
+
+        // if (count && count >= this.capacity) {
+        //     const waitToDeleteCount = Math.floor(count / 10);
+        //     let cursor = await this.db?.transaction("dynamic-height-list", "readwrite").store.openCursor()
+        //     for (let i = 0; i < waitToDeleteCount; i++) {
+        //         await cursor?.delete()
+        //         cursor = await cursor?.continue()
+        //     }
+        // }
     }
 
     clearAllData() {

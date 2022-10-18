@@ -1,6 +1,6 @@
 {
   "name": "react-predict-virtual",
-  "version": "0.0.1",
+  "version": "0.1.13",
   "type": "module",
   "packageManager": "pnpm@7.9.5",
   "description": "A virtual list for auto height list-item in React",
@@ -10,20 +10,19 @@
     "type": "git",
     "url": "git+https://github.com/mysteryven/react-virtual-list.git"
   },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.esm.js"
-    },
-    "./createPredictWorker": {
-      "types:": "./dist/createPredictWorker.d.ts",
-      "import": "./dist/createPredictWorker.esm.js"
+      "import": "./dist/index.js"
     }
   },
   "scripts": {
     "start": "vite build --watch",
+    "tsup": "tsup",
     "example": "vite example --mode example",
-    "build": "vite build",
+    "build": "vite build && pnpm tsup",
     "prepublishOnly": "pnpm run build",
     "test": "vitest",
     "coverage": "vitest run --coverage"
@@ -53,6 +52,7 @@
     "jsdom": "^20.0.0",
     "typescript": "^4.7.4",
     "vite": "^3.0.0",
-    "vitest": "^0.18.1"
+    "vitest": "^0.18.1",
+    "tsup": "^6.3.0"
   }
 }

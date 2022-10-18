@@ -29,10 +29,10 @@ pnpm build
 |----|----| --- |
 | `itemCount` | required，the count of items| `number`|
 | `itemHeight` | required，the min height of item| `number`|
-| `dividedAreaNum` | 默认是 10，每一层的数据被划分为多少个区块 | `number` |
-| `useDynamicHeight` | 不是必填，默认 false，是否使用动态计算高度 | `boolean` |
-| `factors` | 不是必填，用于描述数据的特征向量 | `number[]` |
-| `version` | 不是必填，version 变化，会清空原有的数据，假如 `factors` 的含义变了，想重置数据库，可以改这个 | `number` |
+| `dividedAreaNum` | The default is 10, which indicates how many blocks the data in each layer is divided into | `number` |
+| `useDynamicHeight` | Not required, default `false`, whether to use dynamic height calculation | `boolean` |
+| `factors` | This field is not required. It is used to describe the eigenvector of the data | `number[]` |
+| `version` | If 'factors' has changed, you can change this if you want to reset the database | `number` |
 
 ## Example
 
@@ -50,7 +50,8 @@ pnpm build
 
 ```ts
 import VirtualList, { ChildItemProps } from 'react-predict-virtual'
-import createPredictWorker from 'react-predict-virtual/createPredictWorker'
+import PredictWorker from './worker?worker&inline'
+const createPredictWorker = () => new PredictWorker()
 
 const arrayLength = 1000
 
@@ -82,4 +83,13 @@ function App() {
     </div>
   )
 }
+```
+
+
+```ts
+// filename worker.ts
+import { exportWorker } from "use-worker-async";
+import { beginPredict } from "../../src/predictHeight/worker";
+
+exportWorker(beginPredict)
 ```
