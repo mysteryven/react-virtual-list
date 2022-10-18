@@ -13,6 +13,8 @@ pnpm i react-predict-virtual
 
 ## Preview
 
+[preview](https://stackblitz.com/edit/vitejs-vite-gqqgju?file=package.json)
+
 ```bash
 pnpm example
 ```
